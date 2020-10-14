@@ -5,9 +5,9 @@
 #include "array.h"
 
 
-array_t* array_create(size_t elem_size, ssize_t size)
+struct array* array_create(size_t elem_size, ssize_t size)
 {
-	array_t* array = (array_t*)malloc(sizeof(array_t));
+	struct array* array = (struct array*)malloc(sizeof(struct array));
 	array->data = calloc(size, elem_size);
 	array->elem_size = elem_size;
 	array->size = size;
@@ -15,20 +15,20 @@ array_t* array_create(size_t elem_size, ssize_t size)
 }
 
 
-void array_destroy(array_t* array)
+void array_destroy(struct array* array)
 {
 	free(array->data);
 	free(array);
 }
 
 
-ssize_t array_size(const array_t* array)
+ssize_t array_size(const struct array* array)
 {
 	return array->size;
 }
 
 
-int array_resize(array_t* array, ssize_t new_size)
+int array_resize(struct array* array, ssize_t new_size)
 {
 	void *new_data = calloc(new_size, array->elem_size);
 	void *old_data = array->data;
@@ -45,7 +45,7 @@ int array_resize(array_t* array, ssize_t new_size)
 }
 
 
-void* array_get(const array_t* array, int i)
+void* array_get(const struct array* array, int i)
 {
 	if (i >= array->size)
 		return NULL;
@@ -54,7 +54,7 @@ void* array_get(const array_t* array, int i)
 }
 
 
-int array_set(const array_t* array, int i, const void* val)
+int array_set(const struct array* array, int i, const void* val)
 {
 	if (i >= array->size)
 		return -i;

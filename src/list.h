@@ -12,68 +12,68 @@ struct list_item {
 };
 
 
-typedef struct {
+struct list {
 	struct list_item *head;
 	struct list_item *tail;
 	ssize_t size;
-} list_t;
+};
 
 
-typedef struct {
-	list_t* list;
+struct list_iter {
+	struct list* list;
 	struct list_item *cur;
-} list_iter_t;
+};
 
 
-list_t* list_create();
+struct list* list_create();
 
 
-void list_destroy(list_t*, void (*)(void*));
+void list_destroy(struct list*, void (*)(void*));
 
 
-int list_size(const list_t* list);
+int list_size(const struct list* list);
 
 
-void list_push_front(list_t*, void*);
+void list_push_front(struct list*, void*);
 
 
-void* list_pop_front(list_t*);
+void* list_pop_front(struct list*);
 
 
-void list_push_back(list_t*, void*);
+void list_push_back(struct list*, void*);
 
 
-void* list_pop_back(list_t*);
+void* list_pop_back(struct list*);
 
 
-void list_iter_ins_after(const list_iter_t*, void*);
+void list_iter_ins_after(const struct list_iter*, void*);
 
 
-void list_iter_ins_before(const list_iter_t*, void*);
+void list_iter_ins_before(const struct list_iter*, void*);
 
 
-list_iter_t list_iter(list_t*);
+struct list_iter list_iter(struct list*);
 
 
-void list_iter_begin(list_iter_t*);
+void list_iter_begin(struct list_iter*);
 
 
-void list_iter_end(list_iter_t*);
+void list_iter_end(struct list_iter*);
 
 
-void list_iter_next(list_iter_t*);
+void list_iter_next(struct list_iter*);
 
 
-void list_iter_prev(list_iter_t*);
+void list_iter_prev(struct list_iter*);
 
 
-int list_iter_has_next(const list_iter_t*);
+int list_iter_has_next(const struct list_iter*);
 
 
-int list_iter_has_prev(const list_iter_t*);
+int list_iter_has_prev(const struct list_iter*);
 
 
-void* list_iter_cur_item(const list_iter_t*);
+void* list_iter_cur_item(const struct list_iter*);
 
 
 #endif

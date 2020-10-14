@@ -5,28 +5,28 @@
 #include <stdlib.h>
 
 
-typedef struct {
+struct array {
 	void* data;
 	size_t elem_size;
 	ssize_t size;
-} array_t;
+};
 
 
-array_t* array_create(size_t, ssize_t);
+struct array* array_create(size_t, ssize_t);
 
 
-void array_destroy(array_t*);
+void array_destroy(struct array*);
 
 
-ssize_t array_size(const array_t*);
+ssize_t array_size(const struct array*);
 
 
-int array_resize(array_t*, ssize_t);
+int array_resize(struct array*, ssize_t);
 
 
-void* array_get(const array_t*, int);
+void* array_get(const struct array*, int);
 
 
-int array_set(const array_t*, int, const void*);
+int array_set(const struct array*, int, const void*);
 
 #endif

@@ -10,25 +10,34 @@
 #include "array.h"
 
 
+/*
+ * Create an empty array for use in a test.
+ */
 static int setup(void **state)
 {
-	array_t* array = array_create(sizeof(int), 10);
+	struct array* array = array_create(sizeof(int), 10);
 	*state = array;
 	return 0;
 }
 
 
+/*
+ * Destroy the list used by the test.
+ */
 static int teardown(void **state)
 {
-	array_t* array = *state;
+	struct array* array = *state;
 	array_destroy(array);
 	return 0;
 }
 
 
+/*
+ * Verify that that the setup array elements are zero.
+ */
 static void verify_initial(void **state)
 {
-	array_t* array = *state;
+	struct array* array = *state;
 
 	int len = array_size(array);
 
@@ -39,9 +48,12 @@ static void verify_initial(void **state)
 }
 
 
+/*
+ * Test setting array elements.
+ */
 static void set_array(void **state)
 {
-	array_t* array = *state;
+	struct array* array = *state;
 
 	int len = array_size(array);
 
@@ -57,9 +69,12 @@ static void set_array(void **state)
 }
 
 
+/*
+ * Test getting element and invalid index.
+ */
 static void get_invalid(void **state)
 {
-	array_t* array = *state;
+	struct array* array = *state;
 
 	int* item = array_get(array, 11);
 
@@ -67,9 +82,12 @@ static void get_invalid(void **state)
 }
 
 
+/*
+ * Test setting element at invalid index.
+ */
 static void set_invalid(void **state)
 {
-	array_t* array = *state;
+	struct array* array = *state;
 
 	int len = array_size(array);
 
@@ -83,9 +101,12 @@ static void set_invalid(void **state)
 }
 
 
+/*
+ * Double the array size.
+ */
 static void double_size(void **state)
 {
-	array_t* array = *state;
+	struct array* array = *state;
 
 	int len = array_size(array);
 
@@ -107,9 +128,12 @@ static void double_size(void **state)
 }
 
 
+/*
+ * Half the array size.
+ */
 static void half_size(void **state)
 {
-	array_t* array = *state;
+	struct array* array = *state;
 
 	int len = array_size(array);
 

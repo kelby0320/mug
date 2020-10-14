@@ -4,9 +4,9 @@
 #include "list.h"
 
 
-list_t* list_create()
+struct list* list_create()
 {
-	list_t* list = (list_t*)malloc(sizeof(list_t));
+	struct list* list = (struct list*)malloc(sizeof(struct list));
 	list->head = NULL;
 	list->tail = NULL;
 	list->size = 0;
@@ -14,7 +14,7 @@ list_t* list_create()
 }
 
 
-void list_destroy(list_t* list, void (*dtor)(void*))
+void list_destroy(struct list* list, void (*dtor)(void*))
 {
 	struct list_item *p, *next;
 	p = list->head;
@@ -32,7 +32,7 @@ void list_destroy(list_t* list, void (*dtor)(void*))
 }
 
 
-int list_size(const list_t* list)
+int list_size(const struct list* list)
 {
 	return list->size;
 }
@@ -48,7 +48,7 @@ static struct list_item* create_list_item(void* data)
 }
 
 
-void list_push_front(list_t* list, void* data)
+void list_push_front(struct list* list, void* data)
 {
 	struct list_item *item = create_list_item(data);
 	
@@ -68,7 +68,7 @@ void list_push_front(list_t* list, void* data)
 }
 
 
-void* list_pop_front(list_t* list)
+void* list_pop_front(struct list* list)
 {
 	/* Don't pop from an empty list */
 	if (list->head == NULL)
@@ -89,7 +89,7 @@ void* list_pop_front(list_t* list)
 }
 
 
-void list_push_back(list_t* list, void* data)
+void list_push_back(struct list* list, void* data)
 {
 	struct list_item *item = create_list_item(data);
 	
@@ -109,7 +109,7 @@ void list_push_back(list_t* list, void* data)
 }
 
 
-void* list_pop_back(list_t* list)
+void* list_pop_back(struct list* list)
 {
 	/* Don't dequeue from an empty list? */
 	if (list->tail == NULL)
@@ -130,7 +130,7 @@ void* list_pop_back(list_t* list)
 }
 
 
-void list_iter_ins_after(const list_iter_t* iter, void* data)
+void list_iter_ins_after(const struct list_iter* iter, void* data)
 {
 	struct list_item *item = create_list_item(data);
 	
@@ -154,7 +154,7 @@ void list_iter_ins_after(const list_iter_t* iter, void* data)
 }
 
 
-void list_iter_ins_before(const list_iter_t* iter, void* data)
+void list_iter_ins_before(const struct list_iter* iter, void* data)
 {
 	struct list_item *item = create_list_item(data);
 	
@@ -178,9 +178,9 @@ void list_iter_ins_before(const list_iter_t* iter, void* data)
 }
 
 
-list_iter_t list_iter(list_t* list)
+struct list_iter list_iter(struct list* list)
 {
-	list_iter_t iter = {
+	struct list_iter iter = {
 		.list = list,
 		.cur = list->head,
 	};
@@ -189,45 +189,45 @@ list_iter_t list_iter(list_t* list)
 }
 
 
-void list_iter_begin(list_iter_t* iter)
+void list_iter_begin(struct list_iter* iter)
 {
 	iter->cur = iter->list->head;
 }
 
 
-void list_iter_end(list_iter_t* iter)
+void list_iter_end(struct list_iter* iter)
 {
 	iter->cur = iter->list->tail;
 }
 
 
-void list_iter_next(list_iter_t* iter)
+void list_iter_next(struct list_iter* iter)
 {
 	if (iter->cur->next != NULL)
 		iter->cur = iter->cur->next;
 }
 
 
-void list_iter_prev(list_iter_t* iter)
+void list_iter_prev(struct list_iter* iter)
 {
 	if (iter->cur->prev != NULL)
 		iter->cur = iter->cur->prev;
 }
 
 
-int list_iter_has_next(const list_iter_t* iter)
+int list_iter_has_next(const struct list_iter* iter)
 {
 	return iter->cur->next != NULL;
 }
 
 
-int list_iter_has_prev(const list_iter_t* iter)
+int list_iter_has_prev(const struct list_iter* iter)
 {
 	return iter->cur->prev != NULL;
 }
 
 
-void* list_iter_cur_item(const list_iter_t* iter)
+void* list_iter_cur_item(const struct list_iter* iter)
 {
 	return iter->cur->data;
 }

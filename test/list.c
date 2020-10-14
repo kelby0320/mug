@@ -15,7 +15,7 @@
  */
 static int setup_empty(void **state)
 {
-	list_t* list = list_create();
+	struct list* list = list_create();
 	*state = list;
 	return 0;
 }
@@ -30,7 +30,7 @@ static int setup_empty(void **state)
  */
 static int teardown_empty(void **state)
 {
-	list_t* list = *state;
+	struct list* list = *state;
 	list_destroy(list, NULL);
 	return 0;
 }
@@ -41,7 +41,7 @@ static int teardown_empty(void **state)
  */
 static int setup_full(void **state)
 {
-	list_t* list = list_create();
+	struct list* list = list_create();
 
 	for (int i = 0; i < 3; i++) {
 		char *str = malloc(sizeof(char) * 8);
@@ -72,7 +72,7 @@ static void free_item_data(void *data)
  */
 static int teardown_full(void **state)
 {
-	list_t* list = *state;
+	struct list* list = *state;
 	list_destroy(list, free_item_data);
 	return 0;
 }
@@ -83,7 +83,7 @@ static int teardown_full(void **state)
  */
 static void push_pop_front(void **state)
 {
-	list_t* list = *state;
+	struct list* list = *state;
 	
 	char *str = "test";
 	list_push_front(list, str);
@@ -106,7 +106,7 @@ static void push_pop_front(void **state)
  */
 static void push_pop_front_3(void **state)
 {
-	list_t* list = *state;
+	struct list* list = *state;
 
 	char strs[3][8] = {
 		"test1",
@@ -141,7 +141,7 @@ static void push_pop_front_3(void **state)
  */
 static void push_pop_back(void **state)
 {
-	list_t* list = *state;
+	struct list* list = *state;
 	
 	char *str = "test";
 	list_push_back(list, str);
@@ -164,7 +164,7 @@ static void push_pop_back(void **state)
  */
 static void push_pop_back_3(void **state)
 {
-	list_t* list = *state;
+	struct list* list = *state;
 
 	char strs[3][8] = {
 		"test1",
@@ -199,7 +199,7 @@ static void push_pop_back_3(void **state)
  */
 static void pop_front_empty_list(void **state)
 {
-	list_t* list = *state;
+	struct list* list = *state;
 
 	char *val = list_pop_front(list);
 
@@ -213,7 +213,7 @@ static void pop_front_empty_list(void **state)
  */
 static void pop_back_empty_list(void **state)
 {
-	list_t* list = *state;
+	struct list* list = *state;
 
 	char *val = list_pop_back(list);
 
@@ -227,8 +227,8 @@ static void pop_back_empty_list(void **state)
  */
 static void iterate_list_forward(void **state)
 {
-	list_t* list = *state;
-	list_iter_t iter = list_iter(list);
+	struct list* list = *state;
+	struct list_iter iter = list_iter(list);
 	char str[8];
 	char *data;
 
@@ -249,8 +249,8 @@ static void iterate_list_forward(void **state)
  */
 static void iterate_list_backward(void **state)
 {
-	list_t* list = *state;
-	list_iter_t iter = list_iter(list);
+	struct list* list = *state;
+	struct list_iter iter = list_iter(list);
 	char str[8];
 	char *data;
 
@@ -273,8 +273,8 @@ static void iterate_list_backward(void **state)
  */
 static void iterate_begin_end(void **state)
 {
-	list_t* list = *state;
-	list_iter_t iter = list_iter(list);
+	struct list* list = *state;
+	struct list_iter iter = list_iter(list);
 	char *data;
 
 	/* Assert iter is at head */
