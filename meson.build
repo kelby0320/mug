@@ -1,6 +1,8 @@
 project('mug', 'c', version: '0.0.1')
 
-src = ['src/list.c', 'src/array.c']
+src = [
+    
+]
 
 incdirs = include_directories('include', 'src')
 

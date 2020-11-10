@@ -1,6 +1,5 @@
 tests = [
-     'list.c',
-     'array.c'
+
 ]
 
 deps = [
