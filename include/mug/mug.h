@@ -26,59 +26,59 @@ typedef enum {
 } mug_http_status_code_t;
 
 
-typedef struct {
+struct mug_request {
     mug_http_method_t req_method;
     char *url;
     char **headers;
     size_t headers_size;
     char *body;
     size_t body_size;
-} mug_request_t;
+};
 
 
-typedef struct {
+struct mug_response {
     mug_http_status_code_t status_code;
     char **headers;
     size_t headers_size;
     char *body;
     size_t body_size;
-} mug_response_t;
+};
 
 
-typedef struct {
+struct mug_http_request {
     char *ip_addr;
     int port;
     char *url;
-    mug_http_request_t req_method;
+    mug_http_method_t req_method;
     char **headers;
     size_t headers_size;
     char *body;
     size_t body_size;
-} mug_http_request_t;
+};
 
 
-typedef struct {
+struct mug_http_response {
     mug_http_status_code_t status_code;
     char **headers;
     size_t headers_size;
     char *body;
     size_t body_size;
-} mug_http_response_t;
+};
 
 
-typedef struct {
+struct mug_fs_request {
     char *path;
     void *buf;
     size_t buf_size;
-} mug_fs_request_t;
+};
 
 
-typedef struct {
+struct mug_fs_response {
     char *path;
     void *buf;
     size_t buf_size;
     size_t bytes_read;
-} mug_fs_response_t;
+};
 
 
 typedef enum {
@@ -88,30 +88,42 @@ typedef enum {
 } mug_result_type_t;
 
 
-typedef struct {
+struct mug_result {
     mug_result_type_t type;
     void *data;
-} mug_result_t;
+};
 
 
-typedef struct {
-    mug_result_t mug_result;
-    mug_response_t *result;
-} mug_respose_result_t;
+struct mug_respose_result {
+    struct mug_result mug_result;
+    struct mug_response *result;
+};
 
 
-typedef struct {
-    mug_result_t mug_result;
-    mug_http_request_t *result;
-    mug_result_t* (*callback)(mug_http_response_t*, void*);
-} mug_http_request_result_t;
+struct mug_http_request_result {
+    struct mug_result mug_result;
+    struct mug_http_request *result;
+    struct mug_result* (*callback)(struct mug_http_response*, void*);
+};
 
 
-typedef struct {
-    mug_result_t mug_result;
-    mug_fs_request_t *result;
-    mug_result_t* (*callback)(mug_fs_response_t*, void*);
-} mug_fs_resquest_result_t;
+struct mug_fs_resquest_result {
+    struct mug_result mug_result;
+    struct mug_fs_request *result;
+    struct mug_result* (*callback)(struct mug_fs_response*, void*);
+};
+
+
+/*
+ * mug_ctx_t constructor 
+ */
+mug_ctx_t* mug_ctx_init(int, int);
+
+
+/* 
+ * mug_ctx_t destructor
+ */
+int mug_ctx_deinit(mug_ctx_t*);
 
 
 #endif
