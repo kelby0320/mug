@@ -4,7 +4,7 @@
 
 struct io_http_event {
     io_event_t event;
-    void (*handler)(void*, void*);
-    mug_http_request_t *http_request;
-    mug_http_response_t *http_response;
+    io_event_t *sync_ev;
+    struct mug_http_request *http_request;
+    struct mug_http_response *http_response;
 };

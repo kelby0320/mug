@@ -5,7 +5,7 @@
 
 struct io_request_event {
     io_event_t event;
-    void (*handler)(void*, void*);
-    mug_request_t *request;
-    mug_response_t *response;
+    io_event_t *sync_ev;
+    struct mug_request *request;
+    struct mug_response *response;
 };

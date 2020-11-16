@@ -4,12 +4,6 @@
 #include <stdlib.h>
 
 
-struct mug_ctx;
-
-
-typedef struct mug_ctx mug_ctx_t;
-
-
 typedef enum {
     HTTP_GET,
     HTTP_HEAD,
@@ -18,12 +12,26 @@ typedef enum {
     HTTP_DELETE,
 } mug_http_method_t;
 
+
 typedef enum {
     STATUS_OK=200,
     STATUS_BAD_REQUEST=400,
     STATUS_NOT_FOUND=404,
     STATUS_INTERNAL_SERVER_ERROR=500,
 } mug_http_status_code_t;
+
+
+typedef enum {
+    RESPONSE_RESULT,
+    HTTP_REQUEST_RESULT,
+    FS_REQUEST_RESULT,
+} mug_result_type_t;
+
+
+struct mug_ctx;
+
+
+typedef struct mug_ctx mug_ctx_t;
 
 
 struct mug_request {
@@ -81,20 +89,20 @@ struct mug_fs_response {
 };
 
 
-typedef enum {
-    RESPONSE_RESULT,
-    HTTP_REQUEST_RESULT,
-    FS_REQUEST_RESULT,
-} mug_result_type_t;
+struct mug_result_set {
+    struct mug_result *results;
+    struct mug_result* (*callback)(void*, void*);
+};
 
 
 struct mug_result {
     mug_result_type_t type;
     void *data;
+    struct mug_result_base *next;
 };
 
 
-struct mug_respose_result {
+struct mug_response_result {
     struct mug_result mug_result;
     struct mug_response *result;
 };
@@ -103,14 +111,12 @@ struct mug_respose_result {
 struct mug_http_request_result {
     struct mug_result mug_result;
     struct mug_http_request *result;
-    struct mug_result* (*callback)(struct mug_http_response*, void*);
 };
 
 
 struct mug_fs_resquest_result {
     struct mug_result mug_result;
     struct mug_fs_request *result;
-    struct mug_result* (*callback)(struct mug_fs_response*, void*);
 };
 
 

@@ -5,7 +5,7 @@
 
 struct io_fs_event {
     io_event_t event;
-    void (*handler)(void*, void*);
-    mug_fs_request_t *fs_request;
-    mug_fs_response_t *fs_response;
+    io_event_t *sync_ev;
+    struct mug_fs_request *fs_request;
+    struct mug_fs_response *fs_response;
 };

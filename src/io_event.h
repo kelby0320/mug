@@ -20,7 +20,6 @@ typedef struct {
     io_event_type_t type;
     io_event_status_t status;
     int fd;
-    io_event_t *prev;
     void* data;
 } io_event_t;
 
