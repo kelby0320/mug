@@ -6,6 +6,7 @@ typedef enum {
     IO_REQUEST_EVENT,
     IO_HTTP_EVENT,
     IO_FS_EVENT,
+    IO_SYNC_EVENT,
 } io_event_type_t;
 
 
@@ -19,6 +20,7 @@ typedef enum {
 typedef struct {
     io_event_type_t type;
     io_event_status_t status;
+    io_event_t* next;
     int fd;
     void* data;
 } io_event_t;
