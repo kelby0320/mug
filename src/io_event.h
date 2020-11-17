@@ -33,7 +33,7 @@ typedef struct io_event_map io_event_map_t;
 io_event_map_t* io_event_map_init();
 
 
-int io_event_map_deinit(io_event_map_t*);
+void io_event_map_deinit(io_event_map_t*);
 
 
 #endif

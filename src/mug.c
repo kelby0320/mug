@@ -44,3 +44,13 @@ mug_ctx_t* mug_ctx_init(int port, int max_conn)
 }
 
 
+void mug_ctx_deinit(mug_ctx_t* mug_ctx)
+{
+    routing_table_deinit(mug_ctx->routing_table);
+
+    thread_pool_deinit(mug_ctx->pool);
+
+    io_event_map_deinit(mug_ctx->event_map);
+
+    free(mug_ctx);
+}

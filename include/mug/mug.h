@@ -28,6 +28,13 @@ typedef enum {
 } mug_result_type_t;
 
 
+typedef enum {
+    MUG_RESPONSE,
+    MUG_HTTP_RESPONSE,
+    MUG_FS_RESPONSE
+} mug_response_type_t;
+
+
 struct mug_ctx;
 
 
@@ -44,7 +51,13 @@ struct mug_request {
 };
 
 
+struct mug_response_base {
+    mug_response_type_t type;
+};
+
+
 struct mug_response {
+    struct mug_response_base mug_response_base;
     mug_http_status_code_t status_code;
     char **headers;
     size_t headers_size;
@@ -66,6 +79,7 @@ struct mug_http_request {
 
 
 struct mug_http_response {
+    struct mug_response_base mug_response_base; 
     mug_http_status_code_t status_code;
     char **headers;
     size_t headers_size;
@@ -82,6 +96,7 @@ struct mug_fs_request {
 
 
 struct mug_fs_response {
+    struct mug_response_base mug_response_base;
     char *path;
     void *buf;
     size_t buf_size;
@@ -89,16 +104,21 @@ struct mug_fs_response {
 };
 
 
-struct mug_result_set {
-    struct mug_result *results;
-    struct mug_result* (*callback)(void*, void*);
+struct mug_continuation {
+    struct mug_response_base *responses;
+    size_t responses_size;
 };
 
 
 struct mug_result {
     mug_result_type_t type;
-    void *data;
-    struct mug_result_base *next;
+};
+
+
+struct mug_result_set {
+    struct mug_result;
+    struct mug_result *results;
+    struct mug_result* (*callback)(struct mug_continuation*);
 };
 
 
@@ -111,12 +131,16 @@ struct mug_response_result {
 struct mug_http_request_result {
     struct mug_result mug_result;
     struct mug_http_request *result;
+    struct mug_result* (*callback)(struct mug_http_response*);
+    void* data;
 };
 
 
 struct mug_fs_resquest_result {
     struct mug_result mug_result;
     struct mug_fs_request *result;
+    struct mug_result* (*callback)(struct mug_fs_response*);
+    void* data;
 };
 
 
@@ -129,7 +153,7 @@ mug_ctx_t* mug_ctx_init(int, int);
 /* 
  * mug_ctx_t destructor
  */
-int mug_ctx_deinit(mug_ctx_t*);
+void mug_ctx_deinit(mug_ctx_t*);
 
 
 #endif

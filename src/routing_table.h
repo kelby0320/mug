@@ -11,7 +11,7 @@ typedef struct routing_table routing_table_t;
 routing_table_t* routing_table_init();
 
 
-int routing_table_deinit(routing_table_t*);
+void routing_table_deinit(routing_table_t*);
 
 
 #endif
