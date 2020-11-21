@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
-#include <sys/epoll.h>
 
 
 #include "mug.h"
+#include "event_ctx.h"
 #include "routing_table.h"
 #include "thread_pool.h"
 #include  "io_event.h"
@@ -15,7 +15,7 @@
 struct mug_ctx {
     int port;
     int max_conn_ev;
-    int epoll_fd;
+    event_ctx_t* event_ctx;
     routing_table_t *routing_table;
     thread_pool_t *pool;
     io_event_map_t *event_map;
@@ -34,6 +34,8 @@ mug_ctx_t* mug_ctx_init(int port, int max_conn)
 
     mug_ctx->max_conn_ev = max_conn;
 
+    mug_ctx->event_map = event_ctx_init();
+
     mug_ctx->routing_table = routing_table_init();
 
     mug_ctx->pool = thread_pool_init(0);
@@ -46,6 +48,8 @@ mug_ctx_t* mug_ctx_init(int port, int max_conn)
 
 void mug_ctx_deinit(mug_ctx_t* mug_ctx)
 {
+    event_ctx_deinit(mug_ctx->event_ctx);
+
     routing_table_deinit(mug_ctx->routing_table);
 
     thread_pool_deinit(mug_ctx->pool);
