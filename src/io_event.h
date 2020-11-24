@@ -17,19 +17,20 @@ typedef enum {
 } io_event_status_t;
 
 
-typedef struct {
+struct io_event {
     io_event_type_t type;
     io_event_status_t status;
-    io_event_t* next;
+    struct io_event* next;
     int fd;
     void* data;
-} io_event_t;
+};
 
 
 struct io_event_map;
 
 
 typedef struct io_event_map io_event_map_t;
+typedef struct io_event io_event_t;
 
 
 io_event_map_t* io_event_map_init();

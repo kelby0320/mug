@@ -5,13 +5,16 @@ deps = [
 ]
 
 src = [
-    'io_event.c',
-    'io_fs_event.c',
-    'io_http_event.c',
-    'io_request_event.c',
-    'mug.c',
-    'route.c',
-    'thread_pool.c',
+    'src/event_ctx.c',
+    'src/io_event.c',
+    'src/io_fs_event.c',
+    'src/io_http_event.c',
+    'src/io_request_event.c',
+    'src/io_sync_event.c',
+    'src/mug.c',
+    'src/routing_table.c',
+    'src/thread_pool.c',
+    'src/work_queue.c'
 ]
 
 incdirs = include_directories('include/mug', 'src')

@@ -28,7 +28,7 @@ io_event_map_t* io_event_map_init()
 }
 
 
-void io_event_deinit(io_event_map_t* map)
+void io_event_map_deinit(io_event_map_t* map)
 {
     /* TODO - free events linked list */
 
