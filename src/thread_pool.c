@@ -32,9 +32,6 @@ static work_queue_t* work_queue_init();
 static void work_queue_deinit(work_queue_t*);
 static void work_queue_enqueue(work_queue_t*, work_item_t*);
 static work_item_t* work_queue_dequeue(work_queue_t*);
-static work_item_t* work_queue_front(work_queue_t*);
-static work_item_t* work_queue_back(work_queue_t*);
-static size_t work_queue_size(work_queue_t*);
 static void fill_pool(pthread_t*, size_t, void* (*)(void*), void*);
 static void* pool_func(void*);
 
@@ -81,6 +78,8 @@ static void work_queue_deinit(work_queue_t *queue)
 
 static void work_queue_enqueue(work_queue_t *queue, work_item_t *item)
 {
+    pthread_mutex_lock(&queue->mtx);
+
     if (queue->front == NULL) {
         queue->front = item;
         queue->back = item;
@@ -91,6 +90,8 @@ static void work_queue_enqueue(work_queue_t *queue, work_item_t *item)
         queue->back = item;
         queue->size++;
     }
+
+    pthread_mutex_unlock(&queue->mtx);
 }
 
 
@@ -100,6 +101,8 @@ static work_item_t* work_queue_dequeue(work_queue_t *queue)
     if (queue->size == 0) {
         return NULL;
     }
+
+    pthread_mutex_lock(&queue->mtx);
 
     work_item_t* item = queue->front;
 
@@ -113,25 +116,10 @@ static work_item_t* work_queue_dequeue(work_queue_t *queue)
     }
 
     queue->size--;
+
+    pthread_mutex_unlock(&queue->mtx);
+
     return item;
-}
-
-
-static work_item_t* work_queue_front(work_queue_t *queue)
-{
-    return queue->front;
-}
-
-
-static work_item_t* work_queue_back(work_queue_t *queue)
-{
-    return queue->back;
-}
-
-
-static size_t work_queue_size(work_queue_t *queue)
-{
-    return queue->size;
 }
 
 
