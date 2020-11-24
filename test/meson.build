@@ -1,5 +1,5 @@
 tests = [
-
+	'work_queue.c'
 ]
 
 deps = [
