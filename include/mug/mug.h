@@ -116,7 +116,7 @@ struct mug_result {
 
 
 struct mug_result_set {
-    struct mug_result;
+    struct mug_result mug_result;
     struct mug_result *results;
     struct mug_result* (*callback)(struct mug_continuation*);
 };

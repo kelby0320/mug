@@ -3,7 +3,9 @@
 
 
 #include "mug.h"
-#include "event_ctx.h"
+#include "event/event.h"
+#include "event/event_ctx.h"
+#include "event/epoll_event_ctx.h"
 #include "routing_table.h"
 #include "thread_pool.h"
 #include  "io_event.h"
@@ -34,7 +36,7 @@ mug_ctx_t* mug_ctx_init(int port, int max_conn)
 
     mug_ctx->max_conn_ev = max_conn;
 
-    mug_ctx->event_map = event_ctx_init();
+    mug_ctx->event_ctx = (event_ctx_t*)epoll_event_ctx_init();
 
     mug_ctx->routing_table = routing_table_init();
 
@@ -48,7 +50,7 @@ mug_ctx_t* mug_ctx_init(int port, int max_conn)
 
 void mug_ctx_deinit(mug_ctx_t* mug_ctx)
 {
-    event_ctx_deinit(mug_ctx->event_ctx);
+    epoll_event_ctx_deinit((epoll_event_ctx_t*)mug_ctx->event_ctx);
 
     routing_table_deinit(mug_ctx->routing_table);
 

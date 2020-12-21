@@ -17,7 +17,7 @@ void thread_pool_deinit(thread_pool_t*);
 int thread_pool_size(const thread_pool_t*);
 
 
-void thread_pool_submit(const thread_pool_t*, int (*)(void*), void*);
+void thread_pool_submit(thread_pool_t*, int (*)(void*), void*);
 
 
 #endif

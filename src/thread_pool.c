@@ -22,8 +22,8 @@ static void* pool_func(void*);
 
 static void fill_pool(pthread_t* pool, size_t pool_size, void* (*func)(void*), void* arg)
 {
-    for (int i = 0; i < pool_size; i++) {
-        pthread_create(pool[0], NULL, func, arg);
+    for (int i = 0; i < (int)pool_size; i++) {
+        pthread_create(&pool[i], NULL, func, arg);
     }
 }
 
@@ -76,6 +76,8 @@ thread_pool_t* thread_pool_init(int pool_size)
     pthread_cond_init(&tpool->cond, NULL); 
     
     fill_pool(tpool->pool, tpool->pool_size, pool_func, tpool);
+
+    return tpool;
 }
 
 
@@ -99,7 +101,7 @@ int thread_pool_size(const thread_pool_t* tpool)
 }
 
 
-void thread_pool_submit(const thread_pool_t* tpool, int (*func)(void*), void* arg)
+void thread_pool_submit(thread_pool_t* tpool, int (*func)(void*), void* arg)
 {
     struct work_item *item = (struct work_item*)malloc(sizeof(struct work_item));
 
@@ -112,3 +114,4 @@ void thread_pool_submit(const thread_pool_t* tpool, int (*func)(void*), void* ar
 
     pthread_mutex_unlock(&tpool->mtx);
 }
+
