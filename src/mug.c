@@ -1,5 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <unistd.h>
 
 
 #include "mug.h"
@@ -48,7 +53,7 @@ mug_ctx_t* mug_ctx_init(int port, int max_conn)
 }
 
 
-void mug_ctx_deinit(mug_ctx_t* mug_ctx)
+void mug_ctx_deinit(mug_ctx_t *mug_ctx)
 {
     epoll_event_ctx_deinit((epoll_event_ctx_t*)mug_ctx->event_ctx);
 
@@ -59,4 +64,57 @@ void mug_ctx_deinit(mug_ctx_t* mug_ctx)
     io_event_map_deinit(mug_ctx->event_map);
 
     free(mug_ctx);
+}
+
+
+void mug_ctx_serve(mug_ctx_t *mug_ctx)
+{
+    /*
+     * 1) Establish listening socket
+     * 2) Begin event loop
+     * 3) Pass events to thread_pool workers
+     */
+
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_family = AF_INET;
+    hints.ai_flags = AI_PASSIVE;
+
+    struct addrinfo *bind_address;
+    getaddrinfo(0, "8080", &hints, &bind_address);
+
+    printf("Create listen_sock\n");
+    int listen_sock = socket(bind_address->ai_family, bind_address->ai_socktype | SOCK_NONBLOCK, bind_address->ai_protocol);
+
+    printf("Bind listen_sock\n");
+    bind(listen_sock, bind_address->ai_addr, bind_address->ai_addrlen);
+
+    printf("Listen\n");
+    listen(listen_sock, 10);
+
+    struct event ev;
+    ev.type = EVENT_IN;
+    ev.fd = listen_sock;
+
+    printf("Add event\n");
+    event_ctx_add(mug_ctx->event_ctx, ev);
+
+    int max_events = 10;
+    struct event *events = (struct event*)malloc(sizeof(struct event) * max_events);
+    
+    printf("Event Loop\n");
+    for (;;) {
+	printf("Wait\n");
+	int nfds = event_ctx_wait(mug_ctx->event_ctx, events, max_events);
+	for (int i = 0; i < nfds; i++) {
+	    if (events[i].fd == listen_sock) {
+		printf("listen_sock event\n");
+		struct sockaddr_storage client_addr;
+		socklen_t client_len = sizeof(client_addr);
+		int client_sock = accept(listen_sock, (struct sockaddr*)&client_addr, &client_len);
+		close(client_sock);
+	    }
+	}
+    }
 }

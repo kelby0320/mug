@@ -15,3 +15,5 @@ foreach t : tests
 	    link_with: muglib)
 	test(tname, exe)
 endforeach
+
+subdir('serve')

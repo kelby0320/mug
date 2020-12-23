@@ -156,4 +156,10 @@ mug_ctx_t* mug_ctx_init(int, int);
 void mug_ctx_deinit(mug_ctx_t*);
 
 
+/* 
+ * Begin serving application
+ */
+void mug_ctx_serve(mug_ctx_t*);
+
+
 #endif

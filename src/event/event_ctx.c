@@ -5,7 +5,7 @@
 #include "event/event_ctx.h"
 
 
-int event_ctx_wait(event_ctx_t *ctx, struct event *events, size_t max_events) {
+int event_ctx_wait(event_ctx_t *ctx, struct event *events, int max_events) {
     return ctx->wait_func(ctx, events, max_events);
 }
 
