@@ -13,7 +13,7 @@
 #include "event/epoll_event_ctx.h"
 #include "routing_table.h"
 #include "thread_pool.h"
-#include  "io_event.h"
+#include  "io_event/io_event_map.h"
 
 
 #define DEFAULT_MAX_CONN_EV 1000;
@@ -27,6 +27,9 @@ struct mug_ctx {
     thread_pool_t *pool;
     io_event_map_t *event_map;
 };
+
+
+static void handle_event(struct event);
 
 
 mug_ctx_t* mug_ctx_init(int port, int max_conn)
@@ -85,7 +88,7 @@ void mug_ctx_serve(mug_ctx_t *mug_ctx)
     getaddrinfo(0, "8080", &hints, &bind_address);
 
     printf("Create listen_sock\n");
-    int listen_sock = socket(bind_address->ai_family, bind_address->ai_socktype | SOCK_NONBLOCK, bind_address->ai_protocol);
+    int listen_sock = socket(bind_address->ai_family, bind_address->ai_socktype, bind_address->ai_protocol);
 
     printf("Bind listen_sock\n");
     bind(listen_sock, bind_address->ai_addr, bind_address->ai_addrlen);
@@ -112,9 +115,22 @@ void mug_ctx_serve(mug_ctx_t *mug_ctx)
 		printf("listen_sock event\n");
 		struct sockaddr_storage client_addr;
 		socklen_t client_len = sizeof(client_addr);
-		int client_sock = accept(listen_sock, (struct sockaddr*)&client_addr, &client_len);
-		close(client_sock);
+		int client_fd = accept(listen_sock, (struct sockaddr*)&client_addr, &client_len);
+
+		ev.type = EVENT_IN;
+		ev.fd = client_fd;
+		event_ctx_add(mug_ctx->event_ctx, ev);
+	    } else {
+		event_ctx_remove(mug_ctx->event_ctx, ev);
+		handle_event(events[i]);
 	    }
 	}
     }
+}
+
+
+static void handle_event(struct event event)
+{
+    printf("handle_event\n");
+    close(event.fd);
 }

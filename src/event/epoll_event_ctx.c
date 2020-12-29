@@ -55,11 +55,23 @@ static void _add_func(event_ctx_t *ctx, struct event event)
 }
 
 
+static void _remove_func(event_ctx_t *ctx, struct event event)
+{
+    struct epoll_event_ctx *epoll_ctx = (struct epoll_event_ctx*)ctx;
+    struct epoll_event ev;
+
+    ev.data.fd = event.fd;
+    ev.events = 0;
+    epoll_ctl(epoll_ctx->epoll_fd, EPOLL_CTL_DEL, event.fd, &ev);
+}
+
+
 epoll_event_ctx_t* epoll_event_ctx_init()
 {
     epoll_event_ctx_t *ctx = (epoll_event_ctx_t*)malloc(sizeof(epoll_event_ctx_t));
     ctx->event_ctx.wait_func = _wait_func;
     ctx->event_ctx.add_func = _add_func;
+    ctx->event_ctx.remove_func = _remove_func;
     ctx->epoll_fd = epoll_create1(0);
     return ctx;
 }
