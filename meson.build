@@ -8,6 +8,7 @@ src = [
     'src/event/event_ctx.c',
     'src/event/epoll_event_ctx.c',
     'src/io_event/io_event_map.c',
+    'src/io_event/io_event.c',
     'src/io_event/io_fs_event.c',
     'src/io_event/io_http_event.c',
     'src/io_event/io_request_event.c',

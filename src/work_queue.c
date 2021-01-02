@@ -15,6 +15,8 @@ work_queue_t* work_queue_init()
     queue->front = NULL;
     queue->back = NULL;
     queue->size = 0;
+
+    return queue;
 }
 
 
@@ -63,8 +65,8 @@ struct work_item* work_queue_dequeue(work_queue_t *queue)
 
     if (queue->front == queue->back) {
         /* Case when queue size is 1 */
-        queue->front == NULL;
-        queue->back == NULL;
+        queue->front = NULL;
+        queue->back = NULL;
     } else {
         /* Generic case */
         queue->front = queue->front->next;        

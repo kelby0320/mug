@@ -36,7 +36,15 @@ io_event_map_t* io_event_map_init()
 void io_event_map_deinit(io_event_map_t *map)
 {
     /* TODO - free events linked list */
-
+    if (map->head != NULL) {
+	for (io_event_t *p = map->head; p != NULL;) {
+	    io_event_t *tmp = p;
+	    p = p->next;
+	    io_event_deinit(tmp);
+	}
+    }
+    map->head = NULL;
+    
     pthread_mutex_destroy(&map->mtx);
 
     free(map);

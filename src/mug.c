@@ -29,7 +29,8 @@ struct mug_ctx {
 };
 
 
-static void handle_event(struct event);
+static void handle_event(thread_pool_t*, struct event);
+static int test_thread_func(void*);
 
 
 mug_ctx_t* mug_ctx_init(int port, int max_conn)
@@ -87,32 +88,25 @@ void mug_ctx_serve(mug_ctx_t *mug_ctx)
     struct addrinfo *bind_address;
     getaddrinfo(0, "8080", &hints, &bind_address);
 
-    printf("Create listen_sock\n");
     int listen_sock = socket(bind_address->ai_family, bind_address->ai_socktype, bind_address->ai_protocol);
 
-    printf("Bind listen_sock\n");
     bind(listen_sock, bind_address->ai_addr, bind_address->ai_addrlen);
 
-    printf("Listen\n");
     listen(listen_sock, 10);
 
     struct event ev;
     ev.type = EVENT_IN;
     ev.fd = listen_sock;
 
-    printf("Add event\n");
     event_ctx_add(mug_ctx->event_ctx, ev);
 
     int max_events = 10;
     struct event *events = (struct event*)malloc(sizeof(struct event) * max_events);
     
-    printf("Event Loop\n");
     for (;;) {
-	printf("Wait\n");
 	int nfds = event_ctx_wait(mug_ctx->event_ctx, events, max_events);
 	for (int i = 0; i < nfds; i++) {
 	    if (events[i].fd == listen_sock) {
-		printf("listen_sock event\n");
 		struct sockaddr_storage client_addr;
 		socklen_t client_len = sizeof(client_addr);
 		int client_fd = accept(listen_sock, (struct sockaddr*)&client_addr, &client_len);
@@ -122,15 +116,28 @@ void mug_ctx_serve(mug_ctx_t *mug_ctx)
 		event_ctx_add(mug_ctx->event_ctx, ev);
 	    } else {
 		event_ctx_remove(mug_ctx->event_ctx, ev);
-		handle_event(events[i]);
+		handle_event(mug_ctx->pool, events[i]);
 	    }
 	}
     }
 }
 
 
-static void handle_event(struct event event)
+static void handle_event(thread_pool_t *tpool, struct event event)
 {
     printf("handle_event\n");
-    close(event.fd);
+    
+    int *fd = (int*)malloc(sizeof(int));
+    *fd = event.fd;
+
+    thread_pool_submit(tpool, test_thread_func, fd);
+}
+
+
+static int test_thread_func(void *arg)
+{
+    int *fd = (int*)arg;
+    printf("Test: %d\n", *fd);
+    close(*fd);
+    return 0;
 }
