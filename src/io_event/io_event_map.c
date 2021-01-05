@@ -53,6 +53,8 @@ void io_event_map_deinit(io_event_map_t *map)
 
 void io_event_map_add_req_event(io_event_map_t *map, io_request_event_t *ev)
 {
+    pthread_mutex_lock(&map->mtx);
+    
     if (map->head == NULL) {
 	map->head = (io_event_t*)ev;
 	((io_event_t*)ev)->next = NULL;
@@ -61,6 +63,8 @@ void io_event_map_add_req_event(io_event_map_t *map, io_request_event_t *ev)
 	map->head = (io_event_t*)ev;
 	((io_event_t*)ev)->next = tmp;
     }
+
+    pthread_mutex_unlock(&map->mtx);
 }
 
 
@@ -73,12 +77,50 @@ void io_event_map_add_io_event(io_event_map_t *map,
 }
 
 
+void io_event_map_remove_event(io_event_map_t *map, io_event_t *ev)
+{
+    pthread_mutex_lock(&map->mtx);
+
+    io_event_t *prev, *p;
+    
+    for (prev = NULL, p = map->head; p != NULL; prev = p, p = p->next) {
+	if (p == ev)
+	    break;
+    }
+
+    if (p == NULL) {
+	/* Node not found */
+	return;
+    }
+
+    if (prev == NULL) {
+	/* Remove from the head of the list */
+	map->head = p->next;
+    } else if (p->next == NULL) {
+	/* Remove from the end of the list */
+	prev->next = NULL;
+    } else {
+	/* Remove from the middle of the list */
+	prev->next = p->next;
+    }
+
+    /* Deallocate node */
+    free(p);
+    
+    pthread_mutex_unlock(&map->mtx);
+}
+
+
 io_event_t* io_event_map_find(io_event_map_t *map, int fd)
 {
+    pthread_mutex_lock(&map->mtx);
+    
     for (io_event_t *p = map->head; p != NULL; p = p->next) {
 	if (p->fd == fd)
 	    return p;
     }
 
+    pthread_mutex_unlock(&map->mtx);
+    
     return NULL;
 }

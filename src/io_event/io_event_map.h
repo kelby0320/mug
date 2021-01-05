@@ -29,6 +29,9 @@ void io_event_map_add_io_event(io_event_map_t*,
 			       io_sync_event_t*);
 
 
+void io_event_map_remove_event(io_event_map_t*, io_event_t*);
+
+
 io_event_t* io_event_map_find(io_event_map_t*, int);
 
 

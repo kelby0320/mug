@@ -39,11 +39,13 @@ static void _deinit_func(io_event_t *io_event)
 }
 
 
-io_request_event_t* io_request_event_init()
+io_request_event_t* io_request_event_init(int fd)
 {
     io_request_event_t *io_req_evt = (io_request_event_t*)malloc(sizeof(io_request_event_t));
 
     io_req_evt->event.deinit_func = _deinit_func;
+    io_req_evt->event.type = IO_REQUEST_EVENT;
+    io_req_evt->event.fd = fd;
 
     return io_req_evt;
 }

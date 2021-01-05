@@ -11,6 +11,7 @@
 #include "event/event.h"
 #include "event/event_ctx.h"
 #include "event/epoll_event_ctx.h"
+#include "event_handler.h"
 #include "routing_table.h"
 #include "thread_pool.h"
 #include  "io_event/io_event_map.h"
@@ -29,8 +30,7 @@ struct mug_ctx {
 };
 
 
-static void handle_event(thread_pool_t*, struct event);
-static int test_thread_func(void*);
+static void delagate_to_thread_pool(thread_pool_t*, io_event_map_t*, struct event);
 
 
 mug_ctx_t* mug_ctx_init(int port, int max_conn)
@@ -116,28 +116,37 @@ void mug_ctx_serve(mug_ctx_t *mug_ctx)
 		event_ctx_add(mug_ctx->event_ctx, ev);
 	    } else {
 		event_ctx_remove(mug_ctx->event_ctx, ev);
-		handle_event(mug_ctx->pool, events[i]);
+		delagate_to_thread_pool(mug_ctx->pool, mug_ctx->event_map, events[i]);
 	    }
 	}
     }
 }
 
 
-static void handle_event(thread_pool_t *tpool, struct event event)
+static void delagate_to_thread_pool(thread_pool_t *tpool, io_event_map_t *event_map, struct event event)
 {
-    printf("handle_event\n");
-    
-    int *fd = (int*)malloc(sizeof(int));
-    *fd = event.fd;
+    printf("delagate to thread pool\n");
 
-    thread_pool_submit(tpool, test_thread_func, fd);
+    io_event_t *io_event = io_event_map_find(event_map, event.fd);
+
+    if (io_event == NULL) {
+	/* Event is a new connection */
+	printf("Event is a new connection\n");
+
+	/* Create io_event and add it to the event map */
+	io_request_event_t *io_req_evt = io_request_event_init(event.fd);
+	io_event_map_add_req_event(event_map, io_req_evt);
+
+	/* Schedule event hanlder for this event */
+	struct event_arg *arg = (struct event_arg*)malloc(sizeof(struct event_arg));
+	arg->io_event_map = event_map;
+	arg->io_event = (io_event_t*)io_req_evt;
+
+	printf("Submitting event to thread pool\n");
+	thread_pool_submit(tpool, handle_request_event, arg);	
+    } else {
+	printf("!!! Event is not a new connection !!!\n");
+    }
 }
 
 
-static int test_thread_func(void *arg)
-{
-    int *fd = (int*)arg;
-    printf("Test: %d\n", *fd);
-    close(*fd);
-    return 0;
-}
