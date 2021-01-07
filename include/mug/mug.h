@@ -36,9 +36,14 @@ typedef enum {
 
 
 struct mug_ctx;
+struct routing_table;
 
 
 typedef struct mug_ctx mug_ctx_t;
+typedef struct routing_table routing_table_t;
+
+
+typedef void (*route_handler_t)(void*, void*);
 
 
 struct mug_request {
@@ -160,6 +165,14 @@ void mug_ctx_deinit(mug_ctx_t*);
  * Begin serving application
  */
 void mug_ctx_serve(mug_ctx_t*);
+
+
+/* Get Mug context routing table */
+routing_table_t* mug_ctx_routing_table(mug_ctx_t*);
+
+
+/* Add route to routing table */
+void routing_table_add_route(routing_table_t*, char*, route_handler_t);
 
 
 #endif

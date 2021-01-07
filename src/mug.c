@@ -123,6 +123,12 @@ void mug_ctx_serve(mug_ctx_t *mug_ctx)
 }
 
 
+routing_table_t* mug_ctx_routing_table(mug_ctx_t *mug_ctx)
+{
+    return mug_ctx->routing_table;
+}
+
+
 static void delagate_to_thread_pool(thread_pool_t *tpool, io_event_map_t *event_map, struct event event)
 {
     printf("delagate to thread pool\n");
