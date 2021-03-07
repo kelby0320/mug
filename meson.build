@@ -14,6 +14,7 @@ src = [
     'src/io_event/io_request_event.c',
     'src/io_event/io_sync_event.c',
     'src/event_handler.c',
+    'src/http_parser.c',
     'src/mug.c',
     'src/routing_table.c',
     'src/thread_pool.c',

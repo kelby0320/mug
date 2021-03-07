@@ -3,7 +3,7 @@
 #include "mug.h"
 
 
-static void test_handler1(void*, void*);
+static void test_handler(void*, void*);
 
 
 int main()

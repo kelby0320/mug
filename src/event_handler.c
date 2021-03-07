@@ -5,6 +5,7 @@
 #include "event_handler.h"
 #include "io_event/io_event.h"
 #include "io_event/io_request_event.h"
+#include "http_parser.h"
 
 
 int handle_request_event(void *arg)
@@ -14,6 +15,12 @@ int handle_request_event(void *arg)
     io_request_event_t *ev = (io_request_event_t*)event_arg->io_event;
     
     printf("Request Event fd: %d\n", ((io_event_t*)ev)->fd);
+
+    struct mug_request *mug_request = parse_http_request(((io_event_t*)ev)->fd);
+    printf("Request Method: %d\n", (int)mug_request->req_method);
+    printf("Request URL: %s\n", mug_request->url);
+    free(mug_request);
+
     close(((io_event_t*)ev)->fd);
 
     io_event_map_remove_event(map, (io_event_t*)ev);

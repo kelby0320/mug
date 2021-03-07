@@ -104,21 +104,21 @@ void mug_ctx_serve(mug_ctx_t *mug_ctx)
     struct event *events = (struct event*)malloc(sizeof(struct event) * max_events);
     
     for (;;) {
-	int nfds = event_ctx_wait(mug_ctx->event_ctx, events, max_events);
-	for (int i = 0; i < nfds; i++) {
-	    if (events[i].fd == listen_sock) {
-		struct sockaddr_storage client_addr;
-		socklen_t client_len = sizeof(client_addr);
-		int client_fd = accept(listen_sock, (struct sockaddr*)&client_addr, &client_len);
+        int nfds = event_ctx_wait(mug_ctx->event_ctx, events, max_events);
+        for (int i = 0; i < nfds; i++) {
+            if (events[i].fd == listen_sock) {
+                struct sockaddr_storage client_addr;
+                socklen_t client_len = sizeof(client_addr);
+                int client_fd = accept(listen_sock, (struct sockaddr*)&client_addr, &client_len);
 
-		ev.type = EVENT_IN;
-		ev.fd = client_fd;
-		event_ctx_add(mug_ctx->event_ctx, ev);
-	    } else {
-		event_ctx_remove(mug_ctx->event_ctx, ev);
-		delagate_to_thread_pool(mug_ctx->pool, mug_ctx->event_map, events[i]);
-	    }
-	}
+                ev.type = EVENT_IN;
+                ev.fd = client_fd;
+                event_ctx_add(mug_ctx->event_ctx, ev);
+            } else {
+                event_ctx_remove(mug_ctx->event_ctx, ev);
+                delagate_to_thread_pool(mug_ctx->pool, mug_ctx->event_map, events[i]);
+            }
+        }
     }
 }
 
@@ -136,22 +136,22 @@ static void delagate_to_thread_pool(thread_pool_t *tpool, io_event_map_t *event_
     io_event_t *io_event = io_event_map_find(event_map, event.fd);
 
     if (io_event == NULL) {
-	/* Event is a new connection */
-	printf("Event is a new connection\n");
+        /* Event is a new connection */
+        printf("Event is a new connection\n");
 
-	/* Create io_event and add it to the event map */
-	io_request_event_t *io_req_evt = io_request_event_init(event.fd);
-	io_event_map_add_req_event(event_map, io_req_evt);
+        /* Create io_event and add it to the event map */
+        io_request_event_t *io_req_evt = io_request_event_init(event.fd);
+        io_event_map_add_req_event(event_map, io_req_evt);
 
-	/* Schedule event hanlder for this event */
-	struct event_arg *arg = (struct event_arg*)malloc(sizeof(struct event_arg));
-	arg->io_event_map = event_map;
-	arg->io_event = (io_event_t*)io_req_evt;
+        /* Schedule event hanlder for this event */
+        struct event_arg *arg = (struct event_arg*)malloc(sizeof(struct event_arg));
+        arg->io_event_map = event_map;
+        arg->io_event = (io_event_t*)io_req_evt;
 
-	printf("Submitting event to thread pool\n");
-	thread_pool_submit(tpool, handle_request_event, arg);	
+        printf("Submitting event to thread pool\n");
+        thread_pool_submit(tpool, handle_request_event, arg);	
     } else {
-	printf("!!! Event is not a new connection !!!\n");
+	    printf("!!! Event is not a new connection !!!\n");
     }
 }
 
