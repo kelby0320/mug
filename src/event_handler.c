@@ -19,6 +19,15 @@ int handle_request_event(void *arg)
     struct mug_request *mug_request = parse_http_request(((io_event_t*)ev)->fd);
     printf("Request Method: %d\n", (int)mug_request->req_method);
     printf("Request URL: %s\n", mug_request->url);
+
+    printf("Headers:\n");
+    for (int i = 0; i < mug_request->headers_size; i++) {
+        printf("%s\n", mug_request->headers[i]);
+    }
+
+    for (int i = 0; i < mug_request->headers_size; i++) {
+        free(mug_request->headers[i]);
+    }
     free(mug_request);
 
     close(((io_event_t*)ev)->fd);
