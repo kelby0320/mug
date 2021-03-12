@@ -33,6 +33,29 @@ struct mug_ctx {
 static void delagate_to_thread_pool(thread_pool_t*, io_event_map_t*, struct event);
 
 
+struct mug_request* mug_request_init()
+{
+    struct mug_request *mug_request = (struct mug_request*)calloc(1, sizeof(struct mug_request));
+    return mug_request;
+}
+
+
+void mug_request_deinit(struct mug_request *mug_request)
+{
+    if (mug_request->headers != NULL) {
+        for (int i = 0; i < mug_request->headers_size; i++) {
+            free(mug_request->headers[i]);
+        }
+    }
+
+    if (mug_request->body != NULL) {
+        free(mug_request->body);
+    }
+    
+    free(mug_request);
+}
+
+
 mug_ctx_t* mug_ctx_init(int port, int max_conn)
 {
     mug_ctx_t *mug_ctx = (mug_ctx_t*)malloc(sizeof(mug_ctx_t));

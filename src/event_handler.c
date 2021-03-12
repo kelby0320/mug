@@ -25,10 +25,10 @@ int handle_request_event(void *arg)
         printf("%s\n", mug_request->headers[i]);
     }
 
-    for (int i = 0; i < mug_request->headers_size; i++) {
-        free(mug_request->headers[i]);
-    }
-    free(mug_request);
+    printf("Body:\n");
+    printf("%s\n", mug_request->body);
+
+    mug_request_deinit(mug_request);
 
     close(((io_event_t*)ev)->fd);
 

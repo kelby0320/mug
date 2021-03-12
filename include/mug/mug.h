@@ -149,29 +149,19 @@ struct mug_fs_resquest_result {
 };
 
 
-/*
- * mug_ctx_t constructor 
- */
+/* mug_request methods */
+struct mug_request* mug_request_init();
+void mug_request_deinit(struct mug_request*);
+
+
+/* mug_ctx_t methods */
 mug_ctx_t* mug_ctx_init(int, int);
-
-
-/* 
- * mug_ctx_t destructor
- */
 void mug_ctx_deinit(mug_ctx_t*);
-
-
-/* 
- * Begin serving application
- */
 void mug_ctx_serve(mug_ctx_t*);
-
-
-/* Get Mug context routing table */
 routing_table_t* mug_ctx_routing_table(mug_ctx_t*);
 
 
-/* Add route to routing table */
+/* routing_table_t methods*/
 void routing_table_add_route(routing_table_t*, char*, route_handler_t);
 
 

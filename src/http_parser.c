@@ -13,10 +13,11 @@
 
 static int request_line(int, char*, int*, int*, struct mug_request*);
 static int headers(int, char*, int*, int*, struct mug_request*);
-// static void body(int, char*, int*, int*, struct mug_request*);
+static int body(int, char*, int*, int*, struct mug_request*);
 static int fill_request_buffer(int, char*);
 static int match_request_method(char*, int, int, mug_http_method_t*);
 static int append_header(char*, int, struct mug_request*);
+static int append_body(char*, int, struct mug_request*);
 
 
 struct mug_request* parse_http_request(int sfd)
@@ -24,11 +25,11 @@ struct mug_request* parse_http_request(int sfd)
     char *buf = (char*)malloc(REQUEST_BUFFER_SIZE);
     int buf_len = 0;
     int buf_loc = 0;
-    struct mug_request *mug_request = (struct mug_request*)calloc(1, sizeof(struct mug_request));
+    struct mug_request *mug_request = mug_request_init();
 
     request_line(sfd, buf, &buf_loc, &buf_len, mug_request);
     headers(sfd, buf, &buf_loc, &buf_len, mug_request);
-    // body(sfd, buf, &buf_loc, &buf_len, mug_request);
+    body(sfd, buf, &buf_loc, &buf_len, mug_request);
 
     return mug_request;
 }
@@ -68,12 +69,13 @@ static int request_line(int sfd, char* buf, int *buf_loc, int *buf_len, struct m
     return 0;
 }
 
+
 static int headers(int sfd, char *buf, int *buf_loc, int *buf_len, struct mug_request *mug_request)
 {
     int header_start = *buf_loc;
     int header_end;
 
-    for (int i = 0; i < 5; i++) {
+    for (;;) {
         for (header_end = header_start; buf[header_end] != '\r' && header_end < *buf_len; header_end++);
         if (header_end + 1 < *buf_len && buf[header_end + 1] != '\n') {
             return -1;
@@ -91,8 +93,30 @@ static int headers(int sfd, char *buf, int *buf_loc, int *buf_len, struct mug_re
         append_header(buf + header_start, header_len, mug_request);
         header_start = header_end + 2;
     }
+
+    *buf_loc = header_start + 2;
     
     return 0;
+}
+
+
+static int body(int sfd, char *buf, int *buf_loc, int *buf_len, struct mug_request *mug_request)
+{
+    for (;;) {
+        char* body_buf = buf + *buf_loc;
+        int body_len = *buf_len - *buf_loc;
+        int appended = append_body(body_buf, body_len, mug_request);
+        *buf_loc += appended;
+
+        if (*buf_loc - 1 == REQUEST_BUFFER_SIZE) {
+            *buf_len = fill_request_buffer(sfd, buf);
+            *buf_loc = 0;
+        } else {
+            break;
+        }
+    }
+
+    return mug_request->body_size;
 }
 
 
@@ -175,4 +199,40 @@ static int append_header(char *buf, int header_len, struct mug_request *mug_requ
     mug_request->headers = new_headers;
     mug_request->headers_size = new_headers_size;
     return mug_request->headers_size;
+}
+
+
+static int append_body(char *buf, int body_len, struct mug_request *mug_request)
+{
+    /*
+     * Case 1: No body allocated
+     */
+    if (mug_request->body == NULL) {
+        mug_request->body = (char*)calloc(body_len + 1, sizeof(char));
+        strncpy(mug_request->body, buf, body_len);
+        mug_request->body_size = body_len + 1;
+        return mug_request->body_size;
+    }
+
+    /*
+     * Case 2: Append buf to existing body
+     */
+
+    /* Allocate new body array */
+    int new_body_size = mug_request->body_size + body_len;
+    char *new_body = (char*)calloc(new_body_size, sizeof(char));
+
+    /* Copy existing body minus '\0'*/
+    strncpy(new_body, mug_request->body, mug_request->body_size - 1);
+
+    /* Append additional body */
+    strncpy(new_body + mug_request->body_size - 1, buf, body_len);
+
+    /* Free old body */
+    free(mug_request->body);
+
+    /* Swap old body with new body */
+    mug_request->body = new_body;
+    mug_request->body_size = new_body_size;
+    return mug_request->body_size;
 }
