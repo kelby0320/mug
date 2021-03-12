@@ -30,7 +30,7 @@ struct mug_ctx {
 };
 
 
-static void delagate_to_thread_pool(thread_pool_t*, io_event_map_t*, struct event);
+static void delagate_to_thread_pool(mug_ctx_t*, struct event);
 
 
 struct mug_request* mug_request_init()
@@ -51,7 +51,7 @@ void mug_request_deinit(struct mug_request *mug_request)
     if (mug_request->body != NULL) {
         free(mug_request->body);
     }
-    
+
     free(mug_request);
 }
 
@@ -139,7 +139,7 @@ void mug_ctx_serve(mug_ctx_t *mug_ctx)
                 event_ctx_add(mug_ctx->event_ctx, ev);
             } else {
                 event_ctx_remove(mug_ctx->event_ctx, ev);
-                delagate_to_thread_pool(mug_ctx->pool, mug_ctx->event_map, events[i]);
+                delagate_to_thread_pool(mug_ctx, events[i]);
             }
         }
     }
@@ -152,10 +152,13 @@ routing_table_t* mug_ctx_routing_table(mug_ctx_t *mug_ctx)
 }
 
 
-static void delagate_to_thread_pool(thread_pool_t *tpool, io_event_map_t *event_map, struct event event)
+static void delagate_to_thread_pool(mug_ctx_t *mug_ctx, struct event event)
 {
     printf("delagate to thread pool\n");
 
+    thread_pool_t *tpool = mug_ctx->pool;
+    io_event_map_t *event_map = mug_ctx->event_map;
+    routing_table_t *routing_table = mug_ctx->routing_table;
     io_event_t *io_event = io_event_map_find(event_map, event.fd);
 
     if (io_event == NULL) {
@@ -163,7 +166,7 @@ static void delagate_to_thread_pool(thread_pool_t *tpool, io_event_map_t *event_
         printf("Event is a new connection\n");
 
         /* Create io_event and add it to the event map */
-        io_request_event_t *io_req_evt = io_request_event_init(event.fd);
+        io_request_event_t *io_req_evt = io_request_event_init(event.fd, routing_table);
         io_event_map_add_req_event(event_map, io_req_evt);
 
         /* Schedule event hanlder for this event */

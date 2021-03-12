@@ -6,6 +6,7 @@
 #include "io_event/io_event.h"
 #include "io_event/io_request_event.h"
 #include "http_parser.h"
+#include "routing_table.h"
 
 
 int handle_request_event(void *arg)
@@ -27,6 +28,11 @@ int handle_request_event(void *arg)
 
     printf("Body:\n");
     printf("%s\n", mug_request->body);
+
+    routing_table_t *routing_table = ev->routing_table;
+    route_handler_t handler = routing_table_find_route(routing_table, mug_request->url);
+
+    handler(NULL, NULL);
 
     mug_request_deinit(mug_request);
 

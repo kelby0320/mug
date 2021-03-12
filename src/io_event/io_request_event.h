@@ -1,14 +1,18 @@
 #ifndef IO_REQUEST_EVENT_H
 #define IO_REQUEST_EVENT_H
 
-
-struct io_request_event;
-
-
-typedef struct io_request_event io_request_event_t;
+#include "routing_table.h"
 
 
-io_request_event_t* io_request_event_init(int);
+typedef struct {
+    io_event_t event;
+    struct mug_request *request;
+    struct mug_response *response;
+    routing_table_t *routing_table;
+} io_request_event_t;
+
+
+io_request_event_t* io_request_event_init(int, routing_table_t*);
 
 
 #endif
