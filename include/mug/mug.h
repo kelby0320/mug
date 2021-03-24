@@ -43,9 +43,6 @@ typedef struct mug_ctx mug_ctx_t;
 typedef struct routing_table routing_table_t;
 
 
-typedef void (*route_handler_t)(void*, void*);
-
-
 struct mug_request {
     mug_http_method_t req_method;
     char *url;
@@ -149,9 +146,17 @@ struct mug_fs_resquest_result {
 };
 
 
+typedef struct mug_result* (*route_handler_t)(struct mug_request*);
+
+
 /* mug_request methods */
 struct mug_request* mug_request_init();
 void mug_request_deinit(struct mug_request*);
+
+
+/* mug_response methods */
+struct mug_response* mug_response_init();
+void mug_response_deinit(struct mug_response*);
 
 
 /* mug_ctx_t methods */

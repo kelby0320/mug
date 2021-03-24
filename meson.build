@@ -7,6 +7,8 @@ deps = [
 src = [
     'src/event/event_ctx.c',
     'src/event/epoll_event_ctx.c',
+    'src/http/http_parser.c',
+    'src/http/http_response_writer.c',
     'src/io_event/io_event_map.c',
     'src/io_event/io_event.c',
     'src/io_event/io_fs_event.c',
@@ -14,7 +16,6 @@ src = [
     'src/io_event/io_request_event.c',
     'src/io_event/io_sync_event.c',
     'src/event_handler.c',
-    'src/http_parser.c',
     'src/mug.c',
     'src/routing_table.c',
     'src/thread_pool.c',

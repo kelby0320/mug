@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-
 #include "mug.h"
 #include "event/event.h"
 #include "event/event_ctx.h"
@@ -53,6 +52,29 @@ void mug_request_deinit(struct mug_request *mug_request)
     }
 
     free(mug_request);
+}
+
+
+struct mug_response* mug_response_init()
+{
+    struct mug_response *response = (struct mug_response*)calloc(1, sizeof(struct mug_response));
+    return response;
+}
+
+
+void mug_response_deinit(struct mug_response *response)
+{
+    if (response->headers != NULL) {
+        for (int i = 0; i < response->headers_size; i++) {
+            free(response->headers[i]);
+        }
+    }
+
+    if (response->body != NULL) {
+        free(response->body);
+    }
+
+    free(response);
 }
 
 
