@@ -22,7 +22,7 @@ src = [
     'src/work_queue.c'
 ]
 
-incdirs = include_directories('include/mug', 'src')
+incdirs = include_directories('include/mug', 'include/mug/core', 'include/mug/types', 'src')
 
 muglib = library('mug', src, include_directories: incdirs, dependencies: deps)
 
