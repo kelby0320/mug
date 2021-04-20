@@ -17,12 +17,12 @@ typedef enum {
 } mug_http_status_code_t;
 
 
-typedef struct {
+struct mug_http_response {
     mug_http_status_code_t status_code;
     char message[MAX_MSG_LEN];
     mug_headers_t *headers;
     mug_body_t *body;
-} mug_http_response_t;
+};
 
 
 #endif

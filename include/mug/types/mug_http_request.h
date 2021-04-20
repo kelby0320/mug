@@ -18,12 +18,12 @@ typedef enum {
 } mug_http_method_t;
 
 
-typedef struct {
+struct mug_http_request {
     mug_http_method_t method;
     char url[MAX_URL_LEN];
     mug_headers_t *headers;
     mug_body_t *body;
-} mug_http_request_t;
+};
 
 
 #endif

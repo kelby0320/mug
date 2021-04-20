@@ -5,9 +5,7 @@
 #include "types/mug_result.h"
 #include "types/mug_continuation_invocation.h"
 #include "types/mug_save_bag.h"
-
-
-typedef mug_result_t* (*continuation_handler_t)(mug_continuation_invocation_t*);
+#include "core/handler.h"
 
 
 typedef struct {

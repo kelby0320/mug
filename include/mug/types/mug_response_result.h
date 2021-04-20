@@ -8,7 +8,7 @@
 
 typedef struct {
     mug_result_t result;
-    mug_http_response_t http_response;
+    struct mug_http_response http_response;
 } mug_response_result_t;
 
 #endif

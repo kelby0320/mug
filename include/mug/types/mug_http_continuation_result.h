@@ -7,7 +7,7 @@
 
 typedef struct {
     mug_continuation_result_t continuation_result;
-    mug_http_request_t http_request;
+    struct mug_http_request http_request;
 } mug_http_continuation_result_t;
 
 
