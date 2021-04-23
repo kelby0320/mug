@@ -2,20 +2,15 @@
 #define EVENT_H
 
 
-typedef enum {
-    EVENT_BASE,
-    EXTERNAL_EVENT_BASE,
-    INTERNAL_EVENT_BASE,
-    NEW_CONNECTION_EVENT,
-    REQUEST_COMPLETED_EVENT,
-    HTTP_RESPONSE_EVENT,
-    HTTP_REQUEST_EVENT
-} event_type_t;
+struct event;
 
 
-typedef struct {
-    event_type_t type;
-} event_t;
+typedef struct event event_t;
+
+
+event_t* event_alloc();
+void event_ctor(event_t*);
+event_type_t event_type(const event_t*);
 
 
 #endif

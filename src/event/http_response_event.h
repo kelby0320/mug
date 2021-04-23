@@ -2,16 +2,19 @@
 #define HTTP_RESPONSE_EVENT_H
 
 
-#include "event/external_event.h"
 #include "core/handler.h"
-#include "types/mug_save_bag.h"
 
 
-typedef struct {
-    external_event_t external_event;
-    continuation_handler_t handler;
-    mug_save_bag_t *save_bag;
-} http_response_event_t;
+struct http_response_event;
+
+
+typedef struct http_response_event http_response_event_t;
+
+
+http_response_event_t* http_response_event_alloc();
+void http_response_event_ctor(http_response_event_t*, mug_continuation_handler_t, int);
+void http_response_event_dtor(http_response_event_t*);
+mug_continuation_handler_t http_response_event_continuation_handler(const http_response_event_t*);
 
 
 #endif

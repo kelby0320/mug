@@ -2,15 +2,20 @@
 #define REQUEST_COMPLETED_EVENT_H
 
 
-#include "event/internal_event.h"
-#include "types/mug_http_response.h"
+#include "types/misc/mug_http_response.h"
 
 
-typedef struct {
-    internal_event_t internal_event;
-    int fd;
-    struct mug_http_response http_response;
-} request_completed_event;
+struct request_completd_event;
+
+
+typedef struct request_completed_event request_completed_event_t;
+
+
+request_completed_event_t* request_completed_event_alloc();
+void request_completed_event_ctor(request_completed_event_t*, int, mug_http_response_t*);
+void request_completed_event_dtor(request_completed_event_t*);
+int request_completed_event_fd(const request_completed_event_t*);
+mug_http_response_t* request_completed_event_http_response(const request_completed_event_t*);
 
 
 #endif

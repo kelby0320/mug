@@ -2,12 +2,14 @@
 #define INTERNAL_EVENT_H
 
 
-#include "event/event.h"
+struct internal_event;
 
 
-typedef struct {
+typedef struct internal_event internal_event_t;
 
-} internal_event_t;
+
+internal_event_t* internal_event_alloc();
+void internal_event_ctor(internal_event_t*);
 
 
 #endif
