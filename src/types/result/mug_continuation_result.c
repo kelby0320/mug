@@ -18,8 +18,9 @@ mug_continuation_result_t* mug_continuation_result_alloc()
 void mug_continuation_result_ctor(mug_continuation_result_t *continuation_result)
 {
     mug_result_t *result = (mug_result_t*)continuation_result;
-    result->type = MUG_CONTINUATION_RESULT_BASE;
+    mug_result_ctor(result);
 
+    continuation_result->result.type = MUG_CONTINUATION_RESULT_BASE;
     continuation_result->handler = NULL;
 
     mug_save_bag_t *save_bag = mug_save_bag_alloc();

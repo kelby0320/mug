@@ -21,7 +21,9 @@ mug_response_result_t* mug_response_result_alloc()
 void mug_response_result_ctor(mug_response_result_t *response_result)
 {
     mug_result_t *result = (mug_result_t*)response_result;
-    result->type = MUG_RESPONSE_RESULT;
+    mug_result_ctor(result);
+
+    response_result->result.type = MUG_RESPONSE_RESULT;
     response_result->http_response = NULL;
 }
 

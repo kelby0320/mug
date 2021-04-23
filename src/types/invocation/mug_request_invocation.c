@@ -30,8 +30,9 @@ mug_request_invocation_t* mug_request_invocation_alloc()
 void mug_request_invocation_ctor(mug_request_invocation_t *request_invocation)
 {
     mug_invocation_t *invocation = (mug_invocation_t*)request_invocation;
-    invocation->type = MUG_REQUEST_INVOCATION;
+    mug_invocation_ctor(invocation);
 
+    request_invocation->invocation.type = MUG_REQUEST_INVOCATION;
     request_invocation->method = HTTP_GET;
     memset(request_invocation->uri, 0, MAX_URI_LEN);
 

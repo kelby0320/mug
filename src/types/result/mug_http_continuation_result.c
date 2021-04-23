@@ -1,7 +1,5 @@
 #include <stdlib.h>
 
-#include "types/result/mug_result_type.h"
-#include "types/result/__mug_result.h"
 #include "types/result/mug_continuation_result.h"
 #include "types/result/__mug_continuation_result.h"
 #include "types/result/mug_http_continuation_result.h"
@@ -26,8 +24,7 @@ void mug_http_continuation_result_ctor(mug_http_continuation_result_t *http_cont
     mug_continuation_result_t *continuation_result = (mug_continuation_result_t*)http_continuation_result;
     mug_continuation_result_ctor(continuation_result);
 
-    mug_result_t *result = (mug_result_t*)http_continuation_result;
-    result->type = MUG_HTTP_CONTINUATION_RESULT;
+    http_continuation_result->continuation_result.result.type = MUG_HTTP_CONTINUATION_RESULT;
 
     http_continuation_result->http_request = NULL;
 }

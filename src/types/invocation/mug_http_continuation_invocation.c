@@ -1,8 +1,5 @@
 #include <stdlib.h>
 
-
-#include "types/invocation/mug_invocation.h"
-#include "types/invocation/__mug_invocation.h"
 #include "types/invocation/mug_continuation_invocation.h"
 #include "types/invocation/__mug_continuation_invocation.h"
 #include "types/invocation/mug_http_continuation_invocation.h"
@@ -26,9 +23,7 @@ void mug_http_continuation_invocation_ctor(mug_http_continuation_invocation_t *h
     mug_continuation_invocation_t *continuation_invocation = (mug_continuation_invocation_t*)http_continuation_invocation;
     mug_continuation_invocation_ctor(continuation_invocation);
 
-    mug_invocation_t *invocation = (mug_invocation_t*)http_continuation_invocation;
-    invocation->type = MUG_HTTP_CONTINUATION_INVOCATION;
-
+    http_continuation_invocation->continuation_invocation.invocation.type = MUG_HTTP_CONTINUATION_INVOCATION;
     http_continuation_invocation->http_response = NULL;
 }
 

@@ -17,7 +17,8 @@ void mug_continuation_invocation_ctor(mug_continuation_invocation_t *continuatio
 {
     mug_invocation_t *invocation = (mug_invocation_t*)continuation_invocation;
     mug_invocation_ctor(invocation);
-    invocation->type = MUG_CONTINUATION_INVOCATION_BASE;
+    
+    continuation_invocation->invocation.type = MUG_CONTINUATION_INVOCATION_BASE;
 
     mug_save_bag_t *save_bag = mug_save_bag_alloc();
     mug_save_bag_ctor(save_bag);
