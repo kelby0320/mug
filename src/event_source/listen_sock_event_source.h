@@ -9,7 +9,7 @@ typedef struct listen_sock_event_source listen_sock_event_source_t;
 
 
 listen_sock_event_source_t* listen_sock_event_source_alloc();
-void listen_sock_event_source_ctor(listen_sock_event_source_t*, int);
+void listen_sock_event_source_ctor(listen_sock_event_source_t*);
 
 
 #endif

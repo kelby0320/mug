@@ -24,10 +24,10 @@ http_response_event_source_t* http_response_event_source_alloc()
 }
 
 
-void http_response_event_source_ctor(http_response_event_source_t *http_response_event_source, int fd)
+void http_response_event_source_ctor(http_response_event_source_t *http_response_event_source)
 {
     event_source_t *event_source = (event_source_t*)http_response_event_source;
-    event_source_ctor(event_source, fd);
+    event_source_ctor(event_source);
 
     http_response_event_source->event_source.get_event_func = __get_http_response_event_func;
 }

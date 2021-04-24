@@ -24,10 +24,10 @@ listen_sock_event_source_t* listen_sock_event_source_alloc()
 }
 
 
-void listen_sock_event_source_ctor(listen_sock_event_source_t *listen_sock_event_source, int fd)
+void listen_sock_event_source_ctor(listen_sock_event_source_t *listen_sock_event_source)
 {
     event_source_t *event_source = (event_source_t*)listen_sock_event_source;
-    event_source_ctor(event_source, fd);
+    event_source_ctor(event_source);
 
     listen_sock_event_source->event_source.get_event_func = __get_listen_sock_event_func;
 }

@@ -9,7 +9,7 @@ typedef struct http_response_event_source http_response_event_source_t;
 
 
 http_response_event_source_t* http_response_event_source_alloc();
-void http_response_event_source_ctor(http_response_event_source_t*, int);
+void http_response_event_source_ctor(http_response_event_source_t*);
 
 
 #endif

@@ -16,14 +16,20 @@ event_source_t* event_source_alloc()
 }
 
 
-void event_source_ctor(event_source_t *event_source, int fd)
+void event_source_ctor(event_source_t *event_source)
 {
-    event_source->fd = fd;
+    event_source->fd = -1;
     event_source->get_event_func = __get_event_func;
 }
 
 
-event_t* event_source_get_event(event_source_t *event_source)
+int event_source_get_fd(const event_source_t *event_source)
+{
+    return event_source->fd;
+}
+
+
+event_t* event_source_get_event(const event_source_t *event_source)
 {
     return event_source->get_event_func(event_source);
 }
