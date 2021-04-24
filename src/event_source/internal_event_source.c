@@ -31,8 +31,7 @@ internal_event_source_t* internal_event_source_alloc()
 void internal_event_source_ctor(internal_event_source_t *internal_event_source, int fd)
 {
     event_source_t* event_source = (event_source_t*)internal_event_source;
-    event_source_ctor(event_source);
+    event_source_ctor(event_source, fd);
 
-    internal_event_source->event_source.fd = fd;
     internal_event_source->event_source.get_event_func = __get_internal_event_func;
 }
