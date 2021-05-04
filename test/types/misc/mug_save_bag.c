@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <cmocka.h>
 #include <string.h>
-#include <stdio.h>
 
 #include "types/misc/mug_save_bag.h"
 
