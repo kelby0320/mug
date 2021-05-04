@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdio.h>
 
 #include "types/misc/mug_save_bag.h"
 
@@ -9,7 +10,7 @@
 #define SAVE_BAG_RESIZE_THRESHOLD 0.75
 
 
-static enum item_type {
+enum item_type {
     INTEGER_ITEM,
     DOUBLE_ITEM,
     POINTER_ITEM,
@@ -18,16 +19,16 @@ static enum item_type {
 };
 
 
-static union item_value {
+union item_value {
     int i;
     double d;
-    const void *p;
-    const char *str;
-    const void *s;
+    void *p;
+    char *str;
+    void *s;
 };
 
 
-static struct item {
+struct item {
     enum item_type type;
     char *key;
     union item_value value;
@@ -41,24 +42,27 @@ struct mug_save_bag {
 };
 
 
-static int hash(const char*);
-static int get_item_location(const mug_save_bag_t*, const char*);
+static unsigned long hash(const char*);
+static int get_insert_location(const mug_save_bag_t*, const char*);
+static int get_retrieve_location(const mug_save_bag_t*, const char*);
 static void free_item(struct item*);
 static int is_item_set(const struct item*);
 static void set_item_key(struct item*, const char*);
 static void set_integer_item(struct item*, const char*, int);
 static void set_double_item(struct item*, const char*, double);
-static void set_pointer_item(struct item*, const char*, const void*);
+static void set_pointer_item(struct item*, const char*, void*);
 static void set_str_item(struct item*, const char*, const char*);
 static void set_struct_item(struct item*, const char*, const void*, size_t);
 static void table_insert(mug_save_bag_t*, struct item);
 static struct item* table_retrieve(const mug_save_bag_t*, const char*);
 static void table_resize(mug_save_bag_t*);
+static void move_save_bag(mug_save_bag_t*, mug_save_bag_t*);
 
 
 mug_save_bag_t* mug_save_bag_alloc()
 {
     mug_save_bag_t *save_bag = (mug_save_bag_t*)malloc(sizeof(mug_save_bag_t));
+    return save_bag;
 }
 
 
@@ -70,15 +74,35 @@ void mug_save_bag_ctor(mug_save_bag_t *save_bag)
 }
 
 
+void mug_save_bag_ctor2(mug_save_bag_t *save_bag, size_t size)
+{
+    save_bag->items = (struct item*)calloc(sizeof(struct item), size);
+    save_bag->capacity = size;
+    save_bag->size = 0;
+}
+
+
 void mug_save_bag_dtor(mug_save_bag_t *save_bag)
 {
-    for (int i = 0; i < save_bag->size; i++) {
+    for (int i = 0; i < save_bag->capacity; i++) {
         if (is_item_set(&save_bag->items[i])) {
             free_item(&save_bag->items[i]);
         }
     }
 
     free(save_bag->items);
+}
+
+
+int mug_save_bag_size(const mug_save_bag_t *save_bag)
+{
+    return save_bag->size;
+}
+
+
+int mug_save_bag_capacity(const mug_save_bag_t *save_bag)
+{
+    return save_bag->capacity;
 }
 
 
@@ -131,7 +155,7 @@ int mug_save_bag_get_int(const mug_save_bag_t *save_bag, const char *key, int *o
 {
     struct item *item = table_retrieve(save_bag, key);
 
-    if (!is_item_set(item)) {
+    if (item == NULL) {
         return -1;
     }
 
@@ -145,7 +169,7 @@ int mug_save_bag_get_dbl(const mug_save_bag_t *save_bag, const char *key, double
 {
     struct item *item = table_retrieve(save_bag, key);
 
-    if (!is_item_set(item)) {
+    if (item == NULL) {
         return -1;
     }
 
@@ -154,11 +178,11 @@ int mug_save_bag_get_dbl(const mug_save_bag_t *save_bag, const char *key, double
     return 0;
 }
 
-int mug_save_bag_get_pointer(const mug_save_bag_t *save_bag, const char *key, void **out)
+int mug_save_bag_get_ptr(const mug_save_bag_t *save_bag, const char *key, void **out)
 {
     struct item *item = table_retrieve(save_bag, key);
 
-    if (!is_item_set(item)) {
+    if (item == NULL) {
         return -1;
     }
 
@@ -172,7 +196,7 @@ int mug_save_bag_get_str(const mug_save_bag_t *save_bag, const char *key, char *
 {
     struct item *item = table_retrieve(save_bag, key);
 
-    if (!is_item_set(item)) {
+    if (item == NULL) {
         return -1;
     }
 
@@ -186,7 +210,7 @@ int mug_save_bag_get_struct(const mug_save_bag_t *save_bag, const char *key, voi
 {
     struct item *item = table_retrieve(save_bag, key);
 
-    if (!is_item_set(item)) {
+    if (item == NULL) {
         return -1;
     }
 
@@ -196,7 +220,7 @@ int mug_save_bag_get_struct(const mug_save_bag_t *save_bag, const char *key, voi
 }
 
 
-static int hash(const char *str)
+static unsigned long hash(const char *str)
 {
     // djb2 algorithm
     // http://www.cse.yorku.ca/~oz/hash.html
@@ -212,19 +236,6 @@ static int hash(const char *str)
 }
 
 
-static int get_item_location(const mug_save_bag_t *save_bag, const char *str)
-{
-    int loc = hash(str) % save_bag->capacity;
-
-
-    while (is_item_set(&save_bag->items[loc])) {
-        loc = (loc + 1) % save_bag->capacity;
-    }
-
-    return loc;
-}
-
-
 static void free_item(struct item *item)
 {
     if (item->type == STRING_ITEM) {
@@ -237,7 +248,7 @@ static void free_item(struct item *item)
 
 static int is_item_set(const struct item *item)
 {
-    if (item->key != NULL || item->value.i != 0) {
+    if (item->key != NULL) {
         return 1;
     }
 
@@ -272,7 +283,7 @@ static void set_double_item(struct item *item, const char *key, double value)
     item->value.d = value;
 }
 
-static void set_pointer_item(struct item *item, const char *key, const void *value)
+static void set_pointer_item(struct item *item, const char *key, void *value)
 {
     item->type = POINTER_ITEM;
 
@@ -305,13 +316,43 @@ static void set_struct_item(struct item *item, const char *key, const void *valu
 }
 
 
+static int get_insert_location(const mug_save_bag_t *save_bag, const char *str)
+{
+    int loc = hash(str) % save_bag->capacity;
+
+    while (is_item_set(&save_bag->items[loc])) {
+        loc = (loc + 1) % save_bag->capacity;
+    }
+
+    return loc;
+}
+
+
+static int get_retrieve_location(const mug_save_bag_t *save_bag, const char *str)
+{
+    int loc = hash(str) % save_bag->capacity;
+    int count = 0;
+
+    while (strcmp(save_bag->items[loc].key, str) != 0 && count < save_bag->capacity) {
+        loc = (loc + 1) % save_bag->capacity;
+        count++;
+    }
+
+    if (count == save_bag->capacity) {
+        return -1;
+    }
+
+    return loc;
+}
+
+
 static void table_insert(mug_save_bag_t *save_bag, struct item item)
 {
     if (save_bag->size + 1 > ceil(save_bag->capacity * SAVE_BAG_RESIZE_THRESHOLD)) {
         table_resize(save_bag);
     }
 
-    int loc = get_item_location(save_bag, &item.key);
+    int loc = get_insert_location(save_bag, item.key);
 
     save_bag->items[loc] = item;
     save_bag->size++;
@@ -320,7 +361,11 @@ static void table_insert(mug_save_bag_t *save_bag, struct item item)
 
 static struct item* table_retrieve(const mug_save_bag_t *save_bag, const char *str)
 {
-    int loc = get_item_location(save_bag, str);
+    int loc = get_retrieve_location(save_bag, str);
+
+    if (loc == -1) {
+        return NULL;
+    }
 
     struct item *item = &save_bag->items[loc];
 
@@ -330,14 +375,29 @@ static struct item* table_retrieve(const mug_save_bag_t *save_bag, const char *s
 
 static void table_resize(mug_save_bag_t *save_bag)
 {
-    mug_save_bag_t *new_save_bag = new_save_bag_alloc();
-    new_save_bag->capacity = save_bag->capacity * 2;
-    new_save_bag->size = 0;
+    int new_capacity = save_bag->capacity * 2;
 
-    for (int i = 0; i < save_bag->size; i++) {
-        table_insert(new_save_bag, save_bag->items[i]);
+    mug_save_bag_t *new_save_bag = mug_save_bag_alloc();
+    mug_save_bag_ctor2(new_save_bag, new_capacity);
+
+
+    for (int i = 0; i < save_bag->capacity; i++) {
+        if (is_item_set(&save_bag->items[i])) {
+            table_insert(new_save_bag, save_bag->items[i]);
+        }
     }
 
-    free(save_bag->items);
-    save_bag = new_save_bag;
+    move_save_bag(save_bag, new_save_bag);
+}
+
+
+static void move_save_bag(mug_save_bag_t *dest, mug_save_bag_t *src)
+{
+    free(dest->items);
+
+    dest->items = src->items;
+    dest->capacity = src->capacity;
+    dest->size = src->size;
+
+    free(src);
 }

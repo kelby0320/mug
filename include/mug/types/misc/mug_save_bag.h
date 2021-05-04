@@ -10,7 +10,10 @@ typedef struct mug_save_bag mug_save_bag_t;
 
 mug_save_bag_t* mug_save_bag_alloc();
 void mug_save_bag_ctor(mug_save_bag_t*);
+void mug_save_bag_ctor2(mug_save_bag_t*, size_t);
 void mug_save_bag_dtor(mug_save_bag_t*);
+int mug_save_bag_size(const mug_save_bag_t*);
+int mug_save_bag_capacity(const mug_save_bag_t*);
 void mug_save_bag_put_int(mug_save_bag_t*, const char*, int);
 void mug_save_bag_put_dbl(mug_save_bag_t*, const char*, double);
 void mug_save_bag_put_ptr(mug_save_bag_t*, const char*, void*);
