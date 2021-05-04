@@ -1,5 +1,6 @@
 tests = [
 	'mug_save_bag.c',
+	'mug_headers.c'
 ]
 
 deps = [

@@ -41,7 +41,7 @@ src = [
     # 'src/types/invocation/mug_http_continuation_invocation.c',
     # 'src/types/invocation/mug_invocation.c',
     # 'src/types/invocation/mug_request_invocation.c',
-    # 'src/types/misc/mug_headers.c',
+    'src/types/misc/mug_headers.c',
     # 'src/types/misc/mug_http_request.c',
     # 'src/types/misc/mug_http_response.c',
     'src/types/misc/mug_save_bag.c',

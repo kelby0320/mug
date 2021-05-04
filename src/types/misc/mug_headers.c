@@ -21,6 +21,7 @@ mug_headers_t* mug_headers_alloc()
 
 
 static void expand_headers(mug_headers_t*);
+static void set_loc_header(char**, const char*);
 
 
 void mug_headers_ctor(mug_headers_t *headers)
@@ -47,11 +48,7 @@ void mug_headers_append(mug_headers_t *headers, const char *header)
         expand_headers(headers);
     }
 
-    char *loc = headers->headers[headers->len];
-
-    int header_len = strlen(header);
-    loc = (char*)malloc(header_len + 1);
-    strcpy(loc, header);
+    set_loc_header(&headers->headers[headers->len], header);
 
     headers->len++;
 }
@@ -72,4 +69,27 @@ void mug_headers_get(const mug_headers_t *headers, int loc, char *out)
 int mug_headers_len(const mug_headers_t *headers)
 {
     return headers->len;
+}
+
+
+static void set_loc_header(char **loc, const char *header)
+{
+    int len = strlen(header);
+    *loc = (char*)malloc(len + 1);
+    strcpy(*loc, header);
+}
+
+
+static void expand_headers(mug_headers_t *headers)
+{
+    int new_capacity = headers->capacity * 2;
+    char **new_headers = (char**)malloc(sizeof(char*) * new_capacity);
+
+    for (int i = 0; i < headers->len; i++) {
+        set_loc_header(&new_headers[i], headers->headers[i]);
+    }
+
+    mug_headers_dtor(headers);
+    headers->headers = new_headers;
+    headers->capacity = new_capacity;
 }
