@@ -2,6 +2,9 @@
 #define EVENT_H
 
 
+#include "event/event_type.h"
+
+
 struct event;
 
 

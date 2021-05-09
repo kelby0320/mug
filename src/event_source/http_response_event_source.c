@@ -3,7 +3,7 @@
 #include "event/event.h"
 #include "event_source/event_source.h"
 #include "event_source/__event_source.h"
-#include "event_source/http_respone_event_source.h"
+#include "event_source/http_response_event_source.h"
 #include "core/handler.h"
 #include "event/http_response_event.h"
 
@@ -24,7 +24,7 @@ event_t* __get_http_response_event_func(event_source_t* event_source)
     http_response_event_t *http_response_event = http_response_event_alloc();
     http_response_event_ctor(http_response_event, continuation_handler, fd);
 
-    return http_response_event;
+    return (event_t*)http_response_event;
 }
 
 

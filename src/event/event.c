@@ -2,6 +2,7 @@
 
 #include "event/event.h"
 #include "event/__event.h"
+#include "event/event_type.h"
 
 
 event_t* event_alloc()

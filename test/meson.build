@@ -1,2 +1,2 @@
-#subdir('event_source')
+subdir('event_source')
 subdir('types')
