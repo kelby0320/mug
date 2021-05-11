@@ -1,6 +1,6 @@
 tests = [
 	'http_response_event_source.c',
-	#'internal_event_source.c',
+	'internal_event_source.c',
 	#'listen_sock_event_source.c'
 ]
 

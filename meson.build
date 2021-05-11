@@ -35,7 +35,7 @@ src = [
     'src/event/request_completed_event.c',
     'src/event_source/event_source.c',
     'src/event_source/http_response_event_source.c',
-    # 'src/event_source/internal_event_source.c',
+    'src/event_source/internal_event_source.c',
     # 'src/event_source/listen_sock_event_source.c',
     # 'src/types/invocation/mug_continuation_invocation.c',
     # 'src/types/invocation/mug_http_continuation_invocation.c',
