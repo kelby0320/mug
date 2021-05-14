@@ -2,6 +2,9 @@
 #define MUG_RESULT_H
 
 
+#include "types/result/mug_result_type.h"
+
+
 struct mug_result;
 
 
