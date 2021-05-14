@@ -22,13 +22,13 @@ event_t* __get_listen_sock_event_func(event_source_t* event_source)
     new_connection_event_t *new_connection_event = new_connection_event_alloc();
     new_connection_event_ctor(new_connection_event, client_fd);
 
-    return new_connection_event;
+    return (event_t*)new_connection_event;
 }
 
 
 listen_sock_event_source_t* listen_sock_event_source_alloc()
 {
-    (listen_sock_event_source_t*)malloc(sizeof(listen_sock_event_source_t));
+    return (listen_sock_event_source_t*)malloc(sizeof(listen_sock_event_source_t));
 }
 
 

@@ -17,7 +17,7 @@ new_connection_event_t* new_connection_event_alloc()
 }
 
 
-void new_connnection_event_ctor(new_connection_event_t *new_connection_event, int fd)
+void new_connection_event_ctor(new_connection_event_t *new_connection_event, int fd)
 {
     external_event_t *external_event = (external_event_t*)new_connection_event;
     external_event_ctor(external_event, fd);
