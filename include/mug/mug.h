@@ -2,8 +2,6 @@
 #define MUG_H
 
 
-#include "core/error.h"
-#include "core/mug_app.h"
 #include "types/mug_body.h"
 #include "types/mug_continuation_invocation.h"
 #include "types/mug_continuation_result.h"
