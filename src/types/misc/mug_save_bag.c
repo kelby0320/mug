@@ -73,10 +73,10 @@ void mug_save_bag_ctor(mug_save_bag_t *save_bag)
 }
 
 
-void mug_save_bag_ctor2(mug_save_bag_t *save_bag, size_t size)
+void mug_save_bag_ctor2(mug_save_bag_t *save_bag, size_t capacity)
 {
-    save_bag->items = (struct item*)calloc(sizeof(struct item), size);
-    save_bag->capacity = size;
+    save_bag->items = (struct item*)calloc(sizeof(struct item), capacity);
+    save_bag->capacity = capacity;
     save_bag->size = 0;
 }
 
