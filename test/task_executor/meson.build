@@ -1,6 +1,5 @@
 tests = [
-    'event_source_map.c',
-	'event_dispatcher.c'
+	'work_queue.c'
 ]
 
 deps = [
@@ -16,7 +15,3 @@ foreach t : tests
 	    link_with: muglib)
 	test(tname, exe)
 endforeach
-
-subdir('event_source')
-subdir('task_executor')
-subdir('types')
