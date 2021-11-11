@@ -13,7 +13,7 @@ struct listen_sock_event_source {
 };
 
 
-event_t* __get_listen_sock_event_func(event_source_t* event_source)
+event_t* __get_listen_sock_event_func(const event_source_t* event_source)
 {
     struct sockaddr_storage client_addr;
     socklen_t client_len = sizeof(client_addr);

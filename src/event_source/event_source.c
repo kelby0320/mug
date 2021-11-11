@@ -4,7 +4,7 @@
 #include "event_source/__event_source.h"
 
 
-event_t* __get_event_func(event_source_t* event_source)
+event_t* __get_event_func(const event_source_t* event_source)
 {
     return NULL;
 }

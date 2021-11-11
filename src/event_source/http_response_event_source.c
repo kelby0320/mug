@@ -14,7 +14,7 @@ struct http_response_event_source {
 };
 
 
-event_t* __get_http_response_event_func(event_source_t* event_source)
+event_t* __get_http_response_event_func(const event_source_t* event_source)
 {
     http_response_event_source_t *http_response_event_source = (http_response_event_source_t*)event_source;
 

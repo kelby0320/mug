@@ -6,7 +6,7 @@
 #include "event_source/event_source.h"
 
 
-typedef event_t* (*get_event_func_t)(event_source_t*);
+typedef event_t* (*get_event_func_t)(const event_source_t*);
 
 
 struct event_source {

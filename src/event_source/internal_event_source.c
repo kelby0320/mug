@@ -13,7 +13,7 @@ struct internal_event_source {
 };
 
 
-event_t* __get_internal_event_func(event_source_t* event_source)
+event_t* __get_internal_event_func(const event_source_t* event_source)
 {
     // Read event_t object address from event_source socket
     int client_fd = accept(event_source->fd, NULL, NULL);
