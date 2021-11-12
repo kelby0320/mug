@@ -2,7 +2,10 @@
 #define WORK_ITEM_H
 
 
-#include "task_executor/task_func.h"
+#include "types/result/mug_result.h"
+
+
+typedef mug_result_t* (*task_func_t)(void*);
 
 
 struct work_item {

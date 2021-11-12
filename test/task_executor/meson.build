@@ -1,5 +1,6 @@
 tests = [
-	'work_queue.c'
+	'work_queue.c',
+	'task_executor.c'
 ]
 
 deps = [

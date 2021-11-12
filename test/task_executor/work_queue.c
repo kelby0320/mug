@@ -7,7 +7,6 @@
 
 #include "task_executor/work_queue.h"
 #include "task_executor/work_item.h"
-#include "task_executor/task_func.h"
 
 
 static int setup(void **state)
