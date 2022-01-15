@@ -44,7 +44,7 @@ static int teardown(void **state)
 }
 
 
-static void test_register_and_raise(void **state)
+static void test_register_and_handle(void **state)
 {
     event_dispatcher_t *dispatcher = (event_dispatcher_t*)*state;
 
@@ -54,7 +54,7 @@ static void test_register_and_raise(void **state)
     new_connection_event_t *event = new_connection_event_alloc();
     new_connection_event_ctor(event, 3);
 
-    success = event_dispatcher_raise_event(dispatcher, (event_t*)event);
+    success = event_dispatcher_handle_event(dispatcher, (event_t*)event);
 
     assert_true(success == 0);
     assert_true(strcmp(global_event_log, "Run dummy event handler.") == 0);
@@ -76,7 +76,7 @@ static void test_register_twice(void **state)
 int main()
 {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test_setup_teardown(test_register_and_raise, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_register_and_handle, setup, teardown),
         cmocka_unit_test_setup_teardown(test_register_twice, setup, teardown)
     };
 

@@ -5,7 +5,7 @@
 #include "types/misc/mug_http_response.h"
 
 
-struct request_completd_event;
+struct request_completed_event;
 
 
 typedef struct request_completed_event request_completed_event_t;

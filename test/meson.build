@@ -1,6 +1,7 @@
 tests = [
     'event_source_map.c',
-	'event_dispatcher.c'
+	'event_dispatcher.c',
+	'event_service.c'
 ]
 
 deps = [

@@ -40,7 +40,7 @@ int event_dispatcher_register_handler(event_dispatcher_t *dispatcher, event_type
 }
 
 
-int event_dispatcher_raise_event(const event_dispatcher_t *dispatcher, const event_t *event)
+int event_dispatcher_handle_event(const event_dispatcher_t *dispatcher, const event_t *event)
 {
     int loc = (int)event_type(event);
 
