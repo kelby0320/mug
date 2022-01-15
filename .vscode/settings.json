@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "request_completed_event.h": "c"
+        "request_completed_event.h": "c",
+        "handler.h": "c",
+        "stdlib.h": "c"
     }
 }

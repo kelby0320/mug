@@ -3,9 +3,7 @@
 
 
 #include "types/result/mug_result.h"
-
-
-typedef mug_result_t* (*task_func_t)(void*);
+#include "task_executor/task_func.h"
 
 
 struct work_item {

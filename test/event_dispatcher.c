@@ -18,7 +18,7 @@
 char global_event_log[GLOBAL_EVENT_LOG_SIZE];
 
 
-void dummy_event_handler(const event_t *event)
+void dummy_event_handler(void *arg)
 {
     strcpy(global_event_log, "Run dummy event handler.");
 }

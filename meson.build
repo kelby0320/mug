@@ -37,8 +37,9 @@ src = [
     'src/types/result/mug_response_result.c',
     'src/types/result/mug_result.c',
     'src/event_dispatcher.c',
+    'src/event_service.c',
     'src/event_source_map.c',
-    'src/event_service.c'
+    'src/routing_table.c'
 ]
 
 incdirs = include_directories('include/mug', 'include/mug/core', 'include/mug/types', 'src')

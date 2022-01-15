@@ -5,13 +5,18 @@
 #include "event/event.h"
 #include "event/event_type.h"
 #include "event_handler/event_handler.h"
+#include "task_executor/i_task_executor.h"
+#include "task_executor/task_func.h"
+#include "event_service.h"
 
 
 #define NUMBER_OF_EVENTS 7
 
 
 struct event_dispatcher {
-    event_handler_func_t map[NUMBER_OF_EVENTS];
+    i_task_executor_t *task_executor;
+    event_service_t *event_service;
+    task_func_t map[NUMBER_OF_EVENTS];
 };
 
 
@@ -21,13 +26,15 @@ event_dispatcher_t* event_dispatcher_alloc()
 }
 
 
-void event_dispatcher_ctor(event_dispatcher_t *dispatcher)
+void event_dispatcher_ctor(event_dispatcher_t *dispatcher, i_task_executor_t *task_executor, event_service_t *event_service)
 {
-    memset(dispatcher->map, 0, NUMBER_OF_EVENTS * sizeof(event_handler_func_t));
+    dispatcher->task_executor = task_executor;
+    dispatcher->event_service = event_service;
+    memset(dispatcher->map, 0, NUMBER_OF_EVENTS * sizeof(task_func_t));
 }
 
 
-int event_dispatcher_register_handler(event_dispatcher_t *dispatcher, event_type_t event_type, event_handler_func_t handler)
+int event_dispatcher_register_handler(event_dispatcher_t *dispatcher, event_type_t event_type, task_func_t handler)
 {
     int loc = (int)event_type;
 
@@ -44,12 +51,18 @@ int event_dispatcher_handle_event(const event_dispatcher_t *dispatcher, const ev
 {
     int loc = (int)event_type(event);
 
-    event_handler_func_t handler = dispatcher->map[loc];
+    task_func_t handler = dispatcher->map[loc];
 
     if (handler == 0) {
         return -1;
     }
 
-    handler(event);
+    struct event_handler_params *params = (struct event_handler_params*)malloc(sizeof(struct event_handler_params));
+    params->event = event;
+    params->event_service = dispatcher->event_service;
+
+    i_task_executor_t *task_executor = dispatcher->task_executor;
+    i_task_executor_submit(task_executor, handler, (void*)params);
+
     return 0;
 }

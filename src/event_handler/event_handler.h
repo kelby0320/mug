@@ -3,9 +3,13 @@
 
 
 #include "event/event.h"
+#include "event_service.h"
 
 
-typedef void (*event_handler_func_t)(const event_t*);
+struct event_handler_params {
+    const event_t *event;
+    const event_service_t *event_service;
+};
 
 
 #endif
