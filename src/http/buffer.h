@@ -18,4 +18,5 @@ void buffer_dtor(buffer_t*);
 char buffer_get_char(buffer_t*);
 
 
+
 #endif

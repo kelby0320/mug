@@ -1,5 +1,6 @@
 tests = [
-	'buffer.c'
+	'buffer.c',
+	'request_parser.c'
 ]
 
 deps = [

@@ -20,6 +20,7 @@ src = [
     'src/event_source/internal_event_source.c',
     'src/event_source/listen_sock_event_source.c',
     'src/http/buffer.c',
+    'src/http/request_parser.c',
     'src/task_executor/i_task_executor.c',
     'src/task_executor/pool_worker.c',
     'src/task_executor/task_executor.c',

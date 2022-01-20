@@ -8,6 +8,7 @@ typedef enum {
     HTTP_POST,
     HTTP_PUT,
     HTTP_DELETE,
+    HTTP_METHOD_UNKNOWN
 } mug_http_method_t;
 
 
