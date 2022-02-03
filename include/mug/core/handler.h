@@ -7,8 +7,8 @@
 #include "types/invocation/mug_continuation_invocation.h"
 
 
-typedef mug_result_t* (*mug_request_handler_t)(mug_request_invocation_t*);
-typedef mug_result_t* (*mug_continuation_handler_t)(mug_continuation_invocation_t*);
+typedef mug_result_t* (*mug_request_handler_t)(const mug_request_invocation_t*);
+typedef mug_result_t* (*mug_continuation_handler_t)(const mug_continuation_invocation_t*);
 
 
 #endif

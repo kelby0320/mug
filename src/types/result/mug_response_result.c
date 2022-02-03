@@ -47,3 +47,10 @@ void mug_response_result_set_http_response(mug_response_result_t *response_resul
 {
     response_result->http_response = http_response;
 }
+
+
+mug_http_response_t* mug_response_result_move_http_response(mug_response_result_t *response_result, mug_http_response_t **dest)
+{
+    *dest = response_result->http_response;
+    response_result->http_response = NULL;
+}

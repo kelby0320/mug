@@ -15,6 +15,7 @@ src = [
     'src/event/internal_event.c',
     'src/event/new_connection_event.c',
     'src/event/request_completed_event.c',
+    'src/event_handler/new_connection.c',
     'src/event_source/event_source.c',
     'src/event_source/http_response_event_source.c',
     'src/event_source/internal_event_source.c',

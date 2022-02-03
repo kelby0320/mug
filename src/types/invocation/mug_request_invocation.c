@@ -4,6 +4,7 @@
 #include "types/invocation/mug_request_invocation.h"
 #include "types/invocation/mug_invocation.h"
 #include "types/invocation/__mug_invocation.h"
+#include "types/misc/mug_http_request.h"
 #include "types/misc/mug_http_method.h"
 #include "types/misc/mug_headers.h"
 #include "types/misc/mug_body.h"
@@ -14,10 +15,7 @@
 
 struct mug_request_invocation {
     mug_invocation_t invocation;
-    mug_http_method_t method;
-    char uri[MAX_URI_LEN];
-    mug_headers_t *headers;
-    mug_body_t *body;
+    mug_http_request_t *http_request;
 };
 
 
@@ -33,61 +31,33 @@ void mug_request_invocation_ctor(mug_request_invocation_t *request_invocation)
     mug_invocation_ctor(invocation);
 
     request_invocation->invocation.type = MUG_REQUEST_INVOCATION;
-    request_invocation->method = HTTP_GET;
-    memset(request_invocation->uri, 0, MAX_URI_LEN);
-
-    mug_headers_t *headers = mug_headers_alloc();
-    mug_headers_ctor(headers);
-    request_invocation->headers = headers;
-
-
-    mug_body_t *body = mug_body_alloc();
-    mug_body_ctor(body);
-    request_invocation->body = body;
+    request_invocation->http_request = NULL;
 }
 
 
 void mug_request_invocation_dtor(mug_request_invocation_t *request_invocation)
 {
-    mug_headers_dtor(request_invocation->headers);
-    free(request_invocation->headers);
-
-    mug_body_dtor(request_invocation->body);
-    free(request_invocation->body);
+    if (request_invocation->http_request) {
+        mug_http_response_dtor(request_invocation->http_request);
+        free(request_invocation->http_request);
+    }
 }
 
 
-mug_http_method_t mug_request_invocation_http_method(const mug_request_invocation_t *request_invocation)
+mug_http_request_t* mug_request_invocation_http_request(const mug_request_invocation_t *request_invocation)
 {
-    return request_invocation->method;
+    return request_invocation->http_request;
 }
 
 
-void mug_request_invocation_set_http_method(mug_request_invocation_t *request_invocation, mug_http_method_t http_method)
+void mug_request_invocation_set_http_request(mug_request_invocation_t *request_invocation, mug_http_request_t *http_request)
 {
-    request_invocation->method = http_method;
+    request_invocation->http_request = http_request;
 }
 
 
-void mug_request_invocation_uri(const mug_request_invocation_t *request_invocation, char *buf)
+mug_http_request_t* mug_request_invocation_move_http_request(mug_request_invocation_t *request_invocation, mug_http_request_t **dest)
 {
-    strcpy(buf, request_invocation->uri);
-}
-
-
-void mug_request_invocation_set_uri(mug_request_invocation_t *request_invocation, const char *buf)
-{
-    strcpy(request_invocation->uri, buf);
-}
-
-
-mug_headers_t* mug_request_invocation_headers(const mug_request_invocation_t *request_invocation)
-{
-    return request_invocation->headers;
-}
-
-
-mug_body_t* mug_request_invocation_body(const mug_request_invocation_t *request_invocation)
-{
-    return request_invocation->body;
+    *dest = request_invocation->http_request;
+    request_invocation->http_request = NULL;
 }

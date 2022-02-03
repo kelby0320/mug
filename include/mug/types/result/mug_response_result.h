@@ -16,5 +16,6 @@ void mug_response_result_ctor(mug_response_result_t*);
 void mug_response_result_dtor(mug_response_result_t*);
 mug_http_response_t* mug_response_result_http_response(const mug_response_result_t*);
 void mug_response_result_set_http_response(mug_response_result_t*, mug_http_response_t*);
+mug_http_response_t* mug_response_result_move_http_response(mug_response_result_t*, mug_http_response_t**);
 
 #endif
