@@ -10,8 +10,6 @@
 #include "types/result/mug_response_result.h"
 #include "core/handler.h"
 #include "http/request_parser.h"
-#include "types/invocation/mug_request_invocation.h"
-#include "types/result/mug_response_result.h"
 
 
 static mug_http_request_t* parse_http_request(const new_connection_event_t*);
@@ -39,6 +37,9 @@ void handle_new_connection(void *arg)
     mug_response_result_dtor(response);
     free(invocation);
     free(response);
+
+    destroy_event_handler_params(params);
+    free(params);
 }
 
 

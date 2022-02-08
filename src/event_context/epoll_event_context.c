@@ -18,7 +18,7 @@ static void __add_func(event_context_t*, struct context_event);
 static void __remove_func(event_context_t*, struct context_event);
 
 
-epoll_event_context_t* epoll_event_ctx_alloc()
+epoll_event_context_t* epoll_event_context_alloc()
 {
     return (epoll_event_context_t*)malloc(sizeof(epoll_event_context_t));
 }

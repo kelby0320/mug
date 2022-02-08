@@ -47,7 +47,7 @@ int request_completed_event_fd(const request_completed_event_t *request_complete
 }
 
 
-mug_http_response_t* request_completed_event_http_request(const request_completed_event_t *request_completed_event)
+mug_http_response_t* request_completed_event_http_response(const request_completed_event_t *request_completed_event)
 {
     return request_completed_event->http_response;
 }

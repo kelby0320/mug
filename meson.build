@@ -8,6 +8,7 @@ deps = [
 ]
 
 src = [
+    'src/core/mug_context.c',
     'src/event/event.c',
     'src/event/external_event.c',
     'src/event/http_request_event.c',
@@ -17,7 +18,9 @@ src = [
     'src/event/request_completed_event.c',
     'src/event_context/epoll_event_context.c',
     'src/event_context/event_context.c',
+    'src/event_handler/event_handler.c',
     'src/event_handler/new_connection.c',
+    'src/event_handler/request_completed.c',
     'src/event_source/event_source.c',
     'src/event_source/http_response_event_source.c',
     'src/event_source/internal_event_source.c',
