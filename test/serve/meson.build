@@ -1,1 +1,0 @@
-executable('test_serve', 'test_serve.c', include_directories: incdirs, link_with: muglib)

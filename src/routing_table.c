@@ -2,90 +2,110 @@
 #include <string.h>
 
 #include "routing_table.h"
+#include "core/handler.h"
 
 
-struct route_item {
-    char *route;
-    route_handler_t handler;
+#define DEFAULT_CAPACITY 32
+
+
+struct item {
+    char *uri;
+    mug_request_handler_t handler;
 };
 
 
 struct routing_table {
-    struct route_item *routes;
-    size_t routes_size;
+    struct item *table;
+    size_t size;
+    size_t capacity;
 };
 
 
-routing_table_t* routing_table_init()
+static void expand_table_size(routing_table_t*);
+static void set_item(struct item*, const char*, mug_request_handler_t);
+
+
+routing_table_t *routing_table_alloc()
 {
-    routing_table_t* tbl = (routing_table_t*)malloc(sizeof(routing_table_t));
-
-    tbl->routes = NULL;
-    tbl->routes_size = 0;
-
-    return tbl;
+    return (routing_table_t*)malloc(sizeof(routing_table_t));
 }
 
 
-void routing_table_deinit(routing_table_t *tbl)
+void routing_table_ctor(routing_table_t *routing_table)
 {
-    /* Deallocate route in each route_item */
-    int size = tbl->routes_size;
+    routing_table->table = (struct item*)malloc(sizeof(struct item) * DEFAULT_CAPACITY);
+    routing_table->size = 0;
+    routing_table->capacity = DEFAULT_CAPACITY;
+}
 
-    for (int i = 0; i < size; i++) {
-        free(tbl->routes[i].route);
+
+void routing_table_dtor(routing_table_t *routing_table)
+{
+    for (int i = 0; i < routing_table->size; i++) {
+        free(routing_table->table[i].uri);
     }
 
-    free(tbl->routes);
-    free(tbl);
+    free(routing_table->table);
 }
 
 
-void routing_table_add_route(routing_table_t *tbl, char *route, route_handler_t handler)
+size_t routing_table_size(const routing_table_t *routing_table)
 {
-    struct route_item *new_item = NULL;
+    return routing_table->size;
+}
 
-    if (tbl->routes_size == 0) {
-        tbl->routes = (struct route_item*)malloc(sizeof(struct route_item));
-        tbl->routes_size = 1;
-        new_item = &tbl->routes[0];
-    } else {
-        int old_size = (int)tbl->routes_size;
-        int new_size = old_size + 1;
 
-        /* Allocate new memory to hold one more route item */
-        struct route_item *new_routes = (struct route_item*)malloc(sizeof(struct route_item) * new_size);
+size_t routing_table_capacity(const routing_table_t *routing_table)
+{
+    return routing_table->capacity;
+}
 
-        /* Copy existing route items */
-        for (int i = 0; i < old_size; i++) {
-            new_routes[i] = tbl->routes[i];
-        }
 
-        /* Swap routes pointers */
-        free(tbl->routes);
-        tbl->routes = new_routes;
-        tbl->routes_size = new_size;
-
-        /* New item is append to the list */
-        new_item = &tbl->routes[new_size - 1];
+void routing_table_add_handler(routing_table_t *routing_table, const char *route, mug_request_handler_t handler)
+{
+    if (routing_table->size == routing_table->capacity) {
+        expand_table_size(routing_table);
     }
 
-    new_item->route = (char*)malloc(strlen(route) + 1);
-    strcpy(new_item->route, route);
-    new_item->handler = handler;
+    struct item *item = &routing_table->table[routing_table->size];
+    set_item(item, route, handler);
+
+    routing_table->size++;
 }
 
 
-route_handler_t routing_table_find_route(const routing_table_t *tbl, const char *route)
+mug_request_handler_t routing_table_get_handler(const routing_table_t *routing_table, const char *route)
 {
-    int size = tbl->routes_size;
-    for (int i = 0; i < size; i++) {
-        if (strcmp(tbl->routes[i].route, route) == 0) {
-            /* Route found! */
-            return tbl->routes[i].handler;
+    for (int i = 0; i < routing_table->size; i++) {
+        const char *item_route = routing_table->table[i].uri;
+        if (strcmp(item_route, route) == 0) {
+            return routing_table->table[i].handler;
         }
     }
 
-    /* Route not found */
     return NULL;
+}
+
+
+static void expand_table_size(routing_table_t *routing_table)
+{
+    size_t new_capacity = routing_table->capacity * 2;
+    struct item *new_table = (struct item*)malloc(sizeof(struct item) * new_capacity);
+
+    for (int i = 0; i < routing_table->size; i++) {
+        new_table[i] = routing_table->table[i];
+    }
+
+    free(routing_table->table);
+
+    routing_table->table = new_table;
+    routing_table->capacity = new_capacity;
+}
+
+
+static void set_item(struct item *item, const char *route, mug_request_handler_t handler)
+{
+    item->uri = (char*)malloc(sizeof(char) * strlen(route) + 1);
+    strcpy(item->uri, route);
+    item->handler = handler;
 }

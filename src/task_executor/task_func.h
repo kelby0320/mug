@@ -1,0 +1,1 @@
+typedef void (*task_func_t)(void*);

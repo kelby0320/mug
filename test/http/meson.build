@@ -1,8 +1,6 @@
 tests = [
-	#'event_dispatcher.c',
-	'event_service.c',
-	'event_source_map.c',
-	'routing_table.c'
+	'buffer.c',
+	'request_parser.c'
 ]
 
 deps = [
@@ -18,9 +16,3 @@ foreach t : tests
 	    link_with: muglib)
 	test(tname, exe)
 endforeach
-
-subdir('event_handler')
-subdir('event_source')
-subdir('http')
-subdir('task_executor')
-subdir('types')

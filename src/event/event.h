@@ -2,16 +2,18 @@
 #define EVENT_H
 
 
-typedef enum {
-    EVENT_IN,
-    EVENT_OUT
-} event_type_t;
+#include "event/event_type.h"
 
 
-struct event {
-    event_type_t type;
-    int fd;
-};
+struct event;
+
+
+typedef struct event event_t;
+
+
+event_t* event_alloc();
+void event_ctor(event_t*);
+event_type_t event_type(const event_t*);
 
 
 #endif

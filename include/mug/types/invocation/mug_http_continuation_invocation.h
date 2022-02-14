@@ -1,0 +1,21 @@
+#ifndef MUG_HTTP_CONTINUATION_INVOCATION_H
+#define MUG_HTTP_CONTINUATION_INVOCATION_H
+
+
+#include "types/misc/mug_http_response.h"
+
+
+struct mug_http_continuation_invocation;
+
+
+typedef struct mug_http_continuation_invocation mug_http_continuation_invocation_t;
+
+
+mug_http_continuation_invocation_t* mug_http_continuation_invocation_alloc();
+void mug_http_continuation_invocation_ctor(mug_http_continuation_invocation_t*);
+void mug_http_continuation_invocation_dtor(mug_http_continuation_invocation_t*);
+mug_http_response_t* mug_http_continuation_invocation_http_response(const mug_http_continuation_invocation_t*);
+void mug_http_continuation_invocation_set_http_response(mug_http_continuation_invocation_t*, mug_http_response_t*);
+
+
+#endif
