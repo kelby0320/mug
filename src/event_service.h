@@ -12,7 +12,7 @@ typedef struct event_service event_service_t;
 
 
 event_service_t* event_service_alloc();
-void event_service_ctor(event_service_t*, int);
+void event_service_ctor(event_service_t*, const char*);
 int event_service_get_fd(const event_service_t*);
 void event_service_raise_request_completed(const event_service_t*, mug_http_response_t*, int);
 

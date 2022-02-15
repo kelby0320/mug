@@ -38,7 +38,7 @@ void mug_request_invocation_ctor(mug_request_invocation_t *request_invocation)
 void mug_request_invocation_dtor(mug_request_invocation_t *request_invocation)
 {
     if (request_invocation->http_request) {
-        mug_http_response_dtor(request_invocation->http_request);
+        mug_http_request_dtor(request_invocation->http_request);
         free(request_invocation->http_request);
     }
 }
@@ -56,7 +56,7 @@ void mug_request_invocation_set_http_request(mug_request_invocation_t *request_i
 }
 
 
-mug_http_request_t* mug_request_invocation_move_http_request(mug_request_invocation_t *request_invocation, mug_http_request_t **dest)
+void mug_request_invocation_move_http_request(mug_request_invocation_t *request_invocation, mug_http_request_t **dest)
 {
     *dest = request_invocation->http_request;
     request_invocation->http_request = NULL;

@@ -50,8 +50,9 @@ src = [
     'src/routing_table.c'
 ]
 
-incdirs = include_directories('include/mug', 'include/mug/core', 'include/mug/types', 'src')
+incdirs = include_directories('include', 'include/mug', 'src')
 
 muglib = library('mug', src, include_directories: incdirs, dependencies: deps)
 
-subdir('test')
+subdir('test/unit')
+subdir('test/app')

@@ -17,7 +17,7 @@ typedef struct mug_http_response mug_http_response_t;
 mug_http_response_t* mug_http_response_alloc();
 void mug_http_response_ctor(mug_http_response_t*);
 void mug_http_response_dtor(mug_http_response_t*);
-mug_http_version_t mug_http_response_http_version(mug_http_response_t*);
+mug_http_version_t mug_http_response_http_version(const mug_http_response_t*);
 void mug_http_response_set_http_version(mug_http_response_t*, mug_http_version_t);
 mug_http_status_code_t mug_http_response_status_code(const mug_http_response_t*);
 void mug_http_response_set_status_code(mug_http_response_t*, mug_http_status_code_t);

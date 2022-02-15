@@ -8,6 +8,7 @@
 #include "task_executor/i_task_executor.h"
 #include "task_executor/task_func.h"
 #include "event_service.h"
+#include "routing_table.h"
 
 
 #define NUMBER_OF_EVENTS 7
@@ -16,6 +17,7 @@
 struct event_dispatcher {
     i_task_executor_t *task_executor;
     event_service_t *event_service;
+    routing_table_t *routing_table;
     task_func_t map[NUMBER_OF_EVENTS];
 };
 
@@ -26,10 +28,11 @@ event_dispatcher_t* event_dispatcher_alloc()
 }
 
 
-void event_dispatcher_ctor(event_dispatcher_t *dispatcher, i_task_executor_t *task_executor, event_service_t *event_service)
+void event_dispatcher_ctor(event_dispatcher_t *dispatcher, i_task_executor_t *task_executor, event_service_t *event_service, routing_table_t *routing_table)
 {
     dispatcher->task_executor = task_executor;
     dispatcher->event_service = event_service;
+    dispatcher->routing_table = routing_table;
     memset(dispatcher->map, 0, NUMBER_OF_EVENTS * sizeof(task_func_t));
 }
 
@@ -60,6 +63,7 @@ int event_dispatcher_handle_event(const event_dispatcher_t *dispatcher, const ev
     struct event_handler_params *params = (struct event_handler_params*)malloc(sizeof(struct event_handler_params));
     params->event = event;
     params->event_service = dispatcher->event_service;
+    params->routing_table = dispatcher->routing_table;
 
     i_task_executor_t *task_executor = dispatcher->task_executor;
     i_task_executor_submit(task_executor, handler, (void*)params);

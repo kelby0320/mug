@@ -18,7 +18,7 @@ event_t* __get_internal_event_func(const event_source_t* event_source)
     // Read event_t object address from event_source socket
     int client_fd = accept(event_source->fd, NULL, NULL);
 
-    event_t *event = 0;
+    event_t *event = NULL;
     read(client_fd, &event, sizeof(event_t*));
 
     close(client_fd);

@@ -7,6 +7,7 @@
 #include "task_executor/i_task_executor.h"
 #include "task_executor/task_func.h"
 #include "event_service.h"
+#include "routing_table.h"
 
 
 struct event_dispatcher;
@@ -16,7 +17,7 @@ typedef struct event_dispatcher event_dispatcher_t;
 
 
 event_dispatcher_t* event_dispatcher_alloc();
-void event_dispatcher_ctor(event_dispatcher_t*, i_task_executor_t*, event_service_t*);
+void event_dispatcher_ctor(event_dispatcher_t*, i_task_executor_t*, event_service_t*, routing_table_t*);
 int event_dispatcher_register_handler(event_dispatcher_t*, event_type_t, task_func_t);
 int event_dispatcher_handle_event(const event_dispatcher_t*, const event_t*);
 

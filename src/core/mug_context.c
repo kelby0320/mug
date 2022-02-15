@@ -85,6 +85,8 @@ void mug_context_dtor(mug_context_t *mug_context)
 
     routing_table_dtor(mug_context->routing_table);
     free(mug_context->routing_table);
+
+    unlink(INTERNAL_EVENT_FILE);
 }
 
 
@@ -118,9 +120,12 @@ void mug_context_serve(mug_context_t *mug_context)
         int nfds = event_context_wait(event_context, events, MAX_PENDING_CONNECTIONS);
         for (int i = 0; i < nfds; i++) {
             int fd = events[i].fd;
+
             event_source_t *event_source = event_source_map_find_event_source(event_source_map, fd);
             event_t *event = event_source_get_event(event_source);
-            event_dispatcher_handle_event(event_dispatcher, event);
+            if (event != NULL) {
+                event_dispatcher_handle_event(event_dispatcher, event);
+            }
         }
     }
 }
@@ -132,10 +137,10 @@ static void construct_event_dispatcher(mug_context_t *mug_context, struct regist
     task_executor_ctor((task_executor_t*)task_executor);
 
     event_service_t *event_service = event_service_alloc();
-    event_service_ctor(event_service, sock_fds.listen_sock_fd);
+    event_service_ctor(event_service, INTERNAL_EVENT_FILE);
 
     mug_context->event_dispatcher = event_dispatcher_alloc();
-    event_dispatcher_ctor(mug_context->event_dispatcher, task_executor, event_service);
+    event_dispatcher_ctor(mug_context->event_dispatcher, task_executor, event_service, mug_context->routing_table);
 
     event_dispatcher_register_handler(mug_context->event_dispatcher, NEW_CONNECTION_EVENT, handle_new_connection);
     event_dispatcher_register_handler(mug_context->event_dispatcher, REQUEST_COMPLETED_EVENT, handle_request_completed);

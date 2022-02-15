@@ -28,8 +28,7 @@ void handle_new_connection(void *arg)
 
     mug_http_request_t *http_request = parse_http_request(event);
     mug_request_handler_t request_handler = lookup_route_handler(routing_table, http_request);
-    mug_request_invocation_t *invocation = create_request_invocation(http_request);
-    http_request = NULL;
+    mug_request_invocation_t *invocation = create_request_invocation(http_request);  /* Ownership of http_request transfered */
     mug_response_result_t *response = call_request_handler(request_handler, invocation);
     handle_response_result(event_service, event, response);
 
@@ -38,8 +37,9 @@ void handle_new_connection(void *arg)
     free(invocation);
     free(response);
 
-    destroy_event_handler_params(params);
-    free(params);
+    // printf("Destroy Event Handler Params\n");
+    // destroy_event_handler_params(params);
+    // free(params);
 }
 
 

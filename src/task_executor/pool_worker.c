@@ -1,6 +1,5 @@
 #include <pthread.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "task_executor/i_task_executor.h"
 #include "task_executor/task_executor_state.h"
@@ -14,8 +13,6 @@ static void execute_work_item(struct work_item*);
 void* pool_worker(void* arg)
 {
     i_task_executor_t *executor = (i_task_executor_t*)arg;
-
-    pthread_t pid = pthread_self();
 
     for (;;) {
         i_task_executor_start_work(executor);

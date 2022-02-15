@@ -1,0 +1,1 @@
+executable('sample', 'sample.c', include_directories: incdirs, link_with: muglib)

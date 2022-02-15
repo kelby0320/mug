@@ -53,7 +53,7 @@ void mug_http_response_dtor(mug_http_response_t *http_response)
 }
 
 
-mug_http_version_t mug_http_response_http_version(mug_http_response_t *http_response)
+mug_http_version_t mug_http_response_http_version(const mug_http_response_t *http_response)
 {
     return http_response->version;
 }

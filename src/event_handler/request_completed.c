@@ -29,8 +29,10 @@ void handle_request_completed(void *arg)
 
     write_http_response(http_response, sfd);
 
-    destroy_event_handler_params(params);
-    free(params);
+    // destroy_event_handler_params(params);
+    // free(params);
+
+    close(sfd);
 }
 
 
@@ -50,6 +52,7 @@ static void write_http_status_line(const mug_http_response_t *http_response, int
     char msg[128] = "";
     mug_http_response_message(http_response, msg);
 
+
     switch (http_version) {
         case HTTP_1_0:
             write(sfd, "HTTP/1.0", 8);
@@ -61,6 +64,8 @@ static void write_http_status_line(const mug_http_response_t *http_response, int
             write(sfd, "HTTP/2", 6);
             break;
     }
+
+    write(sfd, " ", 1);
 
     switch (status_code) {
         case STATUS_OK:
@@ -76,6 +81,8 @@ static void write_http_status_line(const mug_http_response_t *http_response, int
             write(sfd, "500", 3);
             break;
     }
+
+    write(sfd, " ", 1);
 
     int msg_len = strlen(msg);
     if (msg_len > 0) {
